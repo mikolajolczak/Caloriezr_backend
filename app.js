@@ -29,7 +29,7 @@ app.post('/home', (req, res) => {
         let dailyUserTrainings =[]
         if (err) throw err
         rows.forEach(row => {
-          dailyUserTrainings.push({name:row.Name, timeofday:row.Date.slice(row.Date.indexOf('T')+1,row.Date.indexOf('Z')), date:row.Date.substring(0,row.Date.indexOf('T')), description:row.Description, eventtimelength:row.Time, typeofevent: "training"})
+          dailyUserTrainings.push({name:row.Name, timeofday:row.Date.toISOString().slice(row.Date.toISOString().indexOf('T')+1,row.Date.toISOString().indexOf('Z')), date:row.Date.toISOString().substring(0,row.Date.toISOString().indexOf('T')), description:row.Description, eventtimelength:row.Time, typeofevent: "training"})
         });
         res.status(200).send({ id: req.body.id, username: dailyUserInfo.User_name, steps: dailyUserInfo.Steps, maxsteps: dailyUserInfo.Max_Steps, achievements: dailyUserAchievements, stats: [{ value: dailyUserInfo.Calories, maxvalue: dailyUserInfo.Max_Calories, description: 'Kalorie', unit: 'kcal' }, { value: dailyUserInfo.Carbs, maxvalue: dailyUserInfo.Max_Carbs, description: 'Węgl.', unit: 'g' }, { value: dailyUserInfo.Proteins, maxvalue: dailyUserInfo.Max_Proteins, description: 'Białka', unit: 'g' }, { value: dailyUserInfo.Fats, maxvalue: dailyUserInfo.Max_Fats, description: 'Tłuszcze', unit: 'g' }], events: dailyUserTrainings }).end();
       })
