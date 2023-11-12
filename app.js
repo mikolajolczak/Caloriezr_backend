@@ -16,7 +16,7 @@ app.post('/home', (req, res) => {
   let dailyUserInfo = []
   let dailyUserAchievements = []
   let dailyUserTrainings = []
-  const dailyUserInfoQuery = `SELECT u.Name AS User_Id, i.Max_Steps, i.Steps, i.Date, i.Calories, i.Carbs, i.Proteins, i.Fats, i.Max_Calories, i.Max_Carbs, i.Max_Proteins, i.Max_Fats FROM User AS u, UserInfo AS i WHERE u.Id=i.User_Id AND u.id=${req.body.id}`
+  const dailyUserInfoQuery = `SELECT u.Name AS User_name, i.Max_Steps, i.Steps, i.Date, i.Calories, i.Carbs, i.Proteins, i.Fats, i.Max_Calories, i.Max_Carbs, i.Max_Proteins, i.Max_Fats FROM User AS u, UserInfo AS i WHERE u.Id=i.User_Id AND u.id=${req.body.id}`
   const dailyUserAchievementsInfoQuery = `SELECT acti.Name, achi.Value, acti.Unit FROM User AS u, Achievements as achi, Activities acti where u.Id=achi.User_Id AND u.Id=${req.body.id} AND acti.Id=achi.Activity_Id`
   const dailyUserTrainingsQuery = `SELECT * FROM User AS u, TrainingEvents as train, Training_User as trainu where u.Id=trainu.User_Id AND u.Id=${req.body.id} AND train.Id=trainu.Training_Id`
   connection.query(dailyUserInfoQuery, (err, rows) => {
@@ -35,7 +35,7 @@ app.post('/home', (req, res) => {
       dailyUserTrainings.push({ typeofevent: 'trening', name: row.Name, description: row.Description, date: row.Date, timeofday: row.Date, eventtimelength: row.Time })
     });
   })
-  res.status(200).send({ id: req.body.id, username: rows[0].User_Name, steps: rows[0].Steps, maxsteps: rows[0].Max_Steps, achievements: achievements_list, stats: [{ value: rows[0].Calories, maxvalue: rows[0].Max_Calories, description: 'Kalorie', unit: 'kcal' }, { value: rows[0].Carbs, maxvalue: rows[0].Max_Carbs, description: 'Węgl.', unit: 'g' }, { value: rows[0].Proteins, maxvalue: rows[0].Max_Proteins, description: 'Białka', unit: 'g' }, { value: rows[0].Fats, maxvalue: rows[0].Max_Fats, description: 'Tłuszcze', unit: 'g' }], events: [{ typeofevent: 'food', name: 'Obiad', description: 'Sałatka z pieczonym łososiem', date: '15-12-2023', timeofday: '08:30', eventtimelength: '30 min', calories: '420', carbs: '12', proteins: '16', fats: '7' }, { typeofevent: 'food', name: 'Obiad', description: 'Sałatka z pieczonym łososiem', date: '15-12-2023', timeofday: '14:30', eventtimelength: '30 min', calories: '420', carbs: '12', proteins: '16', fats: '7' }, { typeofevent: 'food', name: 'Obiad', description: 'Sałatka z pieczonym łososiem', date: '15-12-2023', timeofday: '21:30', eventtimelength: '30 min', calories: '420', carbs: '12', proteins: '16', fats: '7' }, { typeofevent: 'trening', name: 'Trening', description: 'Trening pleców', date: '15-12-2023', timeofday: '23:59', eventtimelength: '90 min' }] }).end();
+  res.status(200).send({ id: req.body.id, username: dailyUserInfo.User_Name, steps: dailyUserInfo.Steps, maxsteps: dailyUserInfo.Max_Steps, achievements: dailyUserAchievements, stats: [{ value: dailyUserInfo.Calories, maxvalue: dailyUserInfo.Max_Calories, description: 'Kalorie', unit: 'kcal' }, { value: dailyUserInfo.Carbs, maxvalue: dailyUserInfo.Max_Carbs, description: 'Węgl.', unit: 'g' }, { value: dailyUserInfo.Proteins, maxvalue: dailyUserInfo.Max_Proteins, description: 'Białka', unit: 'g' }, { value: dailyUserInfo.Fats, maxvalue: dailyUserInfo.Max_Fats, description: 'Tłuszcze', unit: 'g' }], events: dailyUserTrainings }).end();
 });
 
 app.post('/add/steps', (req, res) => {
