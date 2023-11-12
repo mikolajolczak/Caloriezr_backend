@@ -11,7 +11,7 @@ const createUnixSocketPool = () => {
 };
 
 const getTimeFromDate = (date) => {
-  let timeWithSeconds = toISOString().slice(date.toISOString().indexOf('T') + 1, date.toISOString().indexOf('Z'))
+  let timeWithSeconds = date.toISOString().slice(date.toISOString().indexOf('T') + 1, date.toISOString().indexOf('Z'))
   return timeWithSeconds.slice(0,timeWithSeconds.indexOf('.')-3)
 }
 
