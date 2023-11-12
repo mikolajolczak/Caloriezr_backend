@@ -9,6 +9,16 @@ const createUnixSocketPool = () => {
     socketPath: process.env.INSTANCE_UNIX_SOCKET,
   });
 };
+
+const getTimeFromDate = (date) => {
+  let timeWithSeconds = toISOString().slice(row.Date.toISOString().indexOf('T') + 1, row.Date.toISOString().indexOf('Z'))
+  return timeWithSeconds.slice(0,timeWithSeconds.indexOf('.')-3)
+}
+
+const getDateFromDate = (date) => {
+  return date.toISOString().substring(0,row.Date.toISOString().indexOf('T'))
+}
+
 const connection = createUnixSocketPool();
 app.use(express.json())
 connection.connect()
@@ -29,7 +39,7 @@ app.post('/home', (req, res) => {
         let dailyUserTrainings =[]
         if (err) throw err
         rows.forEach(row => {
-          dailyUserTrainings.push({name:row.Name, timeofday:row.Date.toISOString().slice(row.Date.toISOString().indexOf('T')+1,row.Date.toISOString().indexOf('Z')).slice(0,row.Date.toISOString().indexOf('.')-3), date:row.Date.toISOString().substring(0,row.Date.toISOString().indexOf('T')), description:row.Description, eventtimelength:row.Time.toISOString().slice(row.Date.toISOString().indexOf('T')+1,row.Date.toISOString().indexOf('Z')).slice(0,row.Date.toISOString().indexOf('.')-3), typeofevent: "training"})
+          dailyUserTrainings.push({name:row.Name, timeofday: getTimeFromDate(row.Date), date:getDateFromDate(row.Date), description:row.Description, eventtimelength: getTimeFromDate(row.Time), typeofevent: "training"})
         });
         res.status(200).send({ id: req.body.id, username: dailyUserInfo.User_name, steps: dailyUserInfo.Steps, maxsteps: dailyUserInfo.Max_Steps, achievements: dailyUserAchievements, stats: [{ value: dailyUserInfo.Calories, maxvalue: dailyUserInfo.Max_Calories, description: 'Kalorie', unit: 'kcal' }, { value: dailyUserInfo.Carbs, maxvalue: dailyUserInfo.Max_Carbs, description: 'Węgl.', unit: 'g' }, { value: dailyUserInfo.Proteins, maxvalue: dailyUserInfo.Max_Proteins, description: 'Białka', unit: 'g' }, { value: dailyUserInfo.Fats, maxvalue: dailyUserInfo.Max_Fats, description: 'Tłuszcze', unit: 'g' }], events: dailyUserTrainings }).end();
       })
