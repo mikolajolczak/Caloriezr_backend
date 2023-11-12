@@ -16,7 +16,7 @@ connection.query('SELECT 1+1 AS solution', (err, rows, fields) => {
 })
 app.use(express.json())
 
-app.get('/home', (req, res) => {
+app.post('/home', (req, res) => {
 
   connection.query(`SELECT Name FROM User WHERE Id=${req.body.id}`, (err, rows, fields) => {
     if (err) throw err
