@@ -1,14 +1,15 @@
 const express = require('express');
 const mysql = require('mysql');
 const app = express();
-const connection = mysql.createConnection({
-  host: '10.20.80.3',
-  port: 3306,
-  user: 'dbuser',
-  password: '7asQoeLN+5=5.)$K',
-  database: 'caloriezr'
-})
-connection.connect()
+const createUnixSocketPool = async () => {
+  return mysql.createPool({
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    socketPath: process.env.INSTANCE_UNIX_SOCKET,
+  });
+};
+const connection = createUnixSocketPool();
 connection.query('SELECT 1+1 AS solution', (err, rows, fields) => {
   if (err) throw err
   console.log(rows[0].solution)
