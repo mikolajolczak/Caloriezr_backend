@@ -16,7 +16,7 @@ const getTimeFromDate = (date) => {
 }
 
 const getDateFromDate = (date) => {
-  return date.toISOString().substring(0,row.Date.toISOString().indexOf('T'))
+  return date.toISOString().substring(0,date.toISOString().indexOf('T'))
 }
 
 const connection = createUnixSocketPool();
