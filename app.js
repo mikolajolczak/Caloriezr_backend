@@ -2,12 +2,17 @@ const express = require('express');
 const mysql = require('mysql');
 const app = express();
 const connection = mysql.createConnection({
-  host: '34.118.75.136',
+  host: '10.20.80.3',
+  port: 3306,
   user: 'dbuser',
-  password: 'FNJdDp^,Og*;%f;u',
+  password: '7asQoeLN+5=5.)$K',
   database: 'caloriezr'
 })
 connection.connect()
+connection.query('SELECT 1+1 AS solution', (err, rows, fields) => {
+  if (err) throw err
+  console.log(rows[0].solution)
+})
 app.use(express.json())
 
 app.get('/home', (req, res) => {
