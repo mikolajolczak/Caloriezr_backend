@@ -93,7 +93,7 @@ app.post('/add/food', (req, res) => {
   const Carbons = req.body.carbons
   const Proteins = req.body.proteins
   const Fats = req.body.fats
-  const UpdateUserInfoQuery = `UPDATE UserInfo SET Proteins=Proteins+${Proteins}, Carbons=Carbons+${Carbons}, Calories=Calories+${Calories}, Fats=Fats+${Fats} WHERE User_Id=${UserId}`
+  const UpdateUserInfoQuery = `UPDATE UserInfo SET Proteins=Proteins+${Proteins}, Carbs=Carbs+${Carbons}, Calories=Calories+${Calories}, Fats=Fats+${Fats} WHERE User_Id=${UserId}`
 
   connection.query(UpdateUserInfoQuery, (err, rows) => {
     if (err) throw err
