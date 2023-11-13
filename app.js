@@ -23,7 +23,7 @@ const mergeEvents = (trainings, foods) => {
   let result = [];
   let i, j = 0
   while (i < trainings.length && j < foods.length) {
-    if (trainings[i] > foods[j]) {
+    if (trainings[i].timeofday > foods[j].timeofday) {
       result.push(foods[j])
       j++
     } else {
