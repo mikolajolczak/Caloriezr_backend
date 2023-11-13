@@ -19,6 +19,22 @@ const getDateFromDate = (date) => {
   return date.toISOString().substring(0,date.toISOString().indexOf('T'))
 }
 
+const mergeEvents = (trainings, foods) => {
+  let result = [];
+  let i, j = 0
+  while (i < trainings.length && j < foods.length) {
+    if (trainings[i] > foods[j]) {
+      result.push(foods[j])
+      j++
+    } else {
+      result.push(trainings[i])
+      i++
+    }
+  }
+  result = result.concat(trainings.slice(i), foods.slice(j))
+  return result
+}
+
 const connection = createUnixSocketPool();
 app.use(express.json())
 connection.connect()
@@ -26,6 +42,7 @@ app.post('/home', (req, res) => {
   const dailyUserInfoQuery = `SELECT u.Name AS User_name, i.Max_Steps, i.Steps, i.Date, i.Calories, i.Carbs, i.Proteins, i.Fats, i.Max_Calories, i.Max_Carbs, i.Max_Proteins, i.Max_Fats FROM User AS u, UserInfo AS i WHERE u.Id=i.User_Id AND u.id=${req.body.id}`
   const dailyUserAchievementsInfoQuery = `SELECT acti.Name, achi.Value, acti.Unit FROM User AS u, Achievements as achi, Activities acti where u.Id=achi.User_Id AND u.Id=${req.body.id} AND acti.Id=achi.Activity_Id`
   const dailyUserTrainingsQuery = `SELECT train.Name, train.Description, train.Time, trainu.Date FROM User AS u, TrainingEvents as train, Training_User as trainu where u.Id=trainu.User_Id AND u.Id=${req.body.id} AND train.Id=trainu.Training_Id`
+  const dailyUserFoodsQuery = `SELECT food.Description, food.Name, food.Preperation_Time, food.Calories, food.Carbs, food.Proteins, food.Fats, foodu.Date FROM User AS u, FoodEvents as food, Food_User as foodu where u.Id=foodu.User_Id AND u.Id=${req.body.id} AND food.Id=foodu.Food_Id`
   connection.query(dailyUserInfoQuery, (err, rows) => {
     if (err) throw err
     let dailyUserInfo = rows[0];
@@ -41,7 +58,14 @@ app.post('/home', (req, res) => {
         rows.forEach(row => {
           dailyUserTrainings.push({name:row.Name, timeofday: getTimeFromDate(row.Date), date:getDateFromDate(row.Date), description:row.Description, eventtimelength: getTimeFromDate(row.Time), typeofevent: "training"})
         });
-        res.status(200).send({ id: req.body.id, username: dailyUserInfo.User_name, steps: dailyUserInfo.Steps, maxsteps: dailyUserInfo.Max_Steps, achievements: dailyUserAchievements, stats: [{ value: dailyUserInfo.Calories, maxvalue: dailyUserInfo.Max_Calories, description: 'Kalorie', unit: 'kcal' }, { value: dailyUserInfo.Carbs, maxvalue: dailyUserInfo.Max_Carbs, description: 'Węgl.', unit: 'g' }, { value: dailyUserInfo.Proteins, maxvalue: dailyUserInfo.Max_Proteins, description: 'Białka', unit: 'g' }, { value: dailyUserInfo.Fats, maxvalue: dailyUserInfo.Max_Fats, description: 'Tłuszcze', unit: 'g' }], events: dailyUserTrainings }).end();
+        connection.query(dailyUserFoodsQuery, (err, rows) => {
+          let dailyUserFoods = []
+          rows.forEach(row => {
+            dailyUserFoods.push({name:row.Name,timeofday:getTimeFromDate(row.Date),date:getDateFromDate(row.Date),description:row.Description, eventtimelength:row.Preperation_Time, calories:row.Calories,carbs: row.Carbs, proteins: row.Proteins,fats: row.Fats,})
+          });
+          let dailyUserEvents = mergeEvents(dailyUserTrainings,dailyUserFoods)
+        })
+        res.status(200).send({ id: req.body.id, username: dailyUserInfo.User_name, steps: dailyUserInfo.Steps, maxsteps: dailyUserInfo.Max_Steps, achievements: dailyUserAchievements, stats: [{ value: dailyUserInfo.Calories, maxvalue: dailyUserInfo.Max_Calories, description: 'Kalorie', unit: 'kcal' }, { value: dailyUserInfo.Carbs, maxvalue: dailyUserInfo.Max_Carbs, description: 'Węgl.', unit: 'g' }, { value: dailyUserInfo.Proteins, maxvalue: dailyUserInfo.Max_Proteins, description: 'Białka', unit: 'g' }, { value: dailyUserInfo.Fats, maxvalue: dailyUserInfo.Max_Fats, description: 'Tłuszcze', unit: 'g' }], events: dailyUserEvents }).end();
       })
     })
   })
