@@ -21,7 +21,8 @@ const getDateFromDate = (date) => {
 
 const mergeEvents = (trainings, foods) => {
   let result = [];
-  let i, j = 0
+  let i = 0
+  let j=0
   while (i < trainings.length && j < foods.length) {
     if (trainings[i].timeofday > foods[j].timeofday) {
       result.push(foods[j])
