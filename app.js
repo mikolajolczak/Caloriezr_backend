@@ -72,8 +72,14 @@ app.post('/home', (req, res) => {
   })
 });
 
-app.post('/add/steps', (req, res) => {
-
+app.post('/user/maxsteps', (req, res) => {
+  const UserId = req.body.id;
+  const NewMaxSteps= req.body.maxsteps
+  const updateMaxSteps = `UPDATE UserInfo SET Max_Steps=${NewMaxSteps} WHERE User_Id=${UserId}`
+  connection.query(updateMaxSteps, (err, rows) => {
+    if (err) throw err
+    res.status(200).send()
+  })
 })
 
 app.get('/scaner', (req,res)=>{
