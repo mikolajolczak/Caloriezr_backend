@@ -82,7 +82,7 @@ app.post('/user/maxsteps', (req, res) => {
   })
 })
 
-app.get('/scaner', (req, res) => {
+app.post('/scaner', (req, res) => {
   const UserId = req.body.id;
   const RecentQuery = `SELECT * FROM Recent_Products, Products WHERE Recent_Products.User_Id=${UserId} and Recent_Products.Products_Id=Products.Id`
   const FavouritesQuery = `SELECT * FROM Favourite_Products, Products WHERE Favourite_Products.User_Id=${UserId} and Favourite_Products.Products_Id=Products.Id`
