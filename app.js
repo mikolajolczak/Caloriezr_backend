@@ -124,7 +124,7 @@ app.post('/add/favourite', (req, res) => {
   connection.query(FindProductQuery, (err, rows) => {
     if (err) throw err
     if (rows.length > 0) {
-      connection.query(`INSERT INTO Recent_Products (User_Id, Products_Id) VALUES (${UserId},${rows[0].Barcode});`, (err, rows) => {
+      connection.query(`INSERT INTO Recent_Products (User_Id, Products_Id) VALUES (${UserId},${rows[0].Id});`, (err, rows) => {
         if (err) throw err
         res.status(200).send()
       })
