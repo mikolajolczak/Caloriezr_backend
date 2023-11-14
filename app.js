@@ -82,8 +82,24 @@ app.post('/user/maxsteps', (req, res) => {
   })
 })
 
-app.get('/scaner', (req,res)=>{
-  res.status(200).send({recent:[{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 2, unit:'g' ,score:'8.5', name:'Precel słony', description:'Pieczywo', sizeofproduct: '100', caloriesperhundred: '13'}], favourites:[{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'},{id: 1, unit:'ml' ,score:'5.5', name:'Dzik Energy Mango', description:'Napój energetyczny', sizeofproduct: '500', caloriesperhundred: '123'}]})
+app.get('/scaner', (req, res) => {
+  const UserId = req.body.id;
+  const RecentQuery = `SELECT * FROM Recent_Products, Products WHERE Recent_Products.User_Id=${UserId} and Recent_Products.Products_Id=Products.Id`
+  const FavouritesQuery = `SELECT * FROM Favourite_Products, Products WHERE Favourite_Products.User_Id=${UserId} and Favourite_Products.Products_Id=Products.Id`
+  connection.query(FavouritesQuery, (err, rows) => {
+    if (err) throw err
+    let favouriteProducts = []
+    rows.forEach(row => {
+      favouriteProducts.push({id: row.Products_Id, unit:row.Size_Unit ,score:row.Score, name:row.Name, description:row.Description, sizeofproduct: row.Size, caloriesperhundred: row.Calories_Per_Hundred})
+    });
+    connection.query(RecentQuery, (err, rows) => {
+      let recentProducts = []
+    rows.forEach(row => {
+      recentProducts.push({id: row.Products_Id, unit:row.Size_Unit ,score:row.Score, name:row.Name, description:row.Description, sizeofproduct: row.Size, caloriesperhundred: row.Calories_Per_Hundred})
+    });
+     })
+  })
+  res.status(200).send({recent:recentProducts, favourites:favouriteProducts})
 })
 
 app.post('/add/food', (req, res) => {
@@ -94,12 +110,17 @@ app.post('/add/food', (req, res) => {
   const Proteins = req.body.proteins
   const Fats = req.body.fats
   const UpdateUserInfoQuery = `UPDATE UserInfo SET Proteins=Proteins+${Proteins}, Carbs=Carbs+${Carbons}, Calories=Calories+${Calories}, Fats=Fats+${Fats} WHERE User_Id=${UserId}`
-
   connection.query(UpdateUserInfoQuery, (err, rows) => {
     if (err) throw err
     res.status(200).send()
   })
 
+})
+
+app.post('/add/favourite', (req, res) => {
+  const UserId = req.body.id
+  const FoodId = req.body.id
+  const FindProductQuery = `SELECT * FROM Products WHERE Products.Id=${FoodId}`
 })
 
 const PORT = parseInt(process.env.PORT) || 8080;
