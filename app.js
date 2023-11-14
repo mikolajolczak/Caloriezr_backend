@@ -97,9 +97,9 @@ app.get('/scaner', (req, res) => {
     rows.forEach(row => {
       recentProducts.push({id: row.Products_Id, unit:row.Size_Unit ,score:row.Score, name:row.Name, description:row.Description, sizeofproduct: row.Size, caloriesperhundred: row.Calories_Per_Hundred})
     });
+      res.status(200).send({ recent: recentProducts, favourites: favouriteProducts })
      })
   })
-  res.status(200).send({recent:recentProducts, favourites:favouriteProducts})
 })
 
 app.post('/add/food', (req, res) => {
