@@ -119,8 +119,17 @@ app.post('/add/food', (req, res) => {
 
 app.post('/add/favourite', (req, res) => {
   const UserId = req.body.id
-  const FoodId = req.body.id
-  const FindProductQuery = `SELECT * FROM Products WHERE Products.Id=${FoodId}`
+  const Barcode = req.body.barcode
+  const FindProductQuery = `SELECT * FROM Products WHERE Products.Barcode=${Barcode}`
+  connection.query(FindProductQuery, (err, rows) => {
+    if (err) throw err
+    if (rows.length > 0) {
+      connection.query(`INSERT INTO Recent_Products (User_Id, Products_Id) VALUES (${UserId},${rows[0].Barcode});`, (err, rows) => {
+        if (err) throw err
+        res.status(200).send()
+      })
+    }
+  })
 })
 
 const PORT = parseInt(process.env.PORT) || 8080;
