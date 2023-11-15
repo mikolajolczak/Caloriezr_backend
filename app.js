@@ -117,7 +117,7 @@ app.post('/add/food', (req, res) => {
 
 })
 
-app.post('/add/favourite', (req, res) => {
+app.post('/add/recent', (req, res) => {
   const UserId = req.body.id
   const Barcode = req.body.barcode
   const FindProductQuery = `SELECT * FROM Products WHERE Products.Barcode=${Barcode}`
@@ -139,6 +139,34 @@ app.post('/remove/recent', (req, res) => {
   const UserId = req.body.id
   const ProductName = req.body.name
   const removeQuery = `DELETE FROM Recent_Products WHERE User_Id=${UserId} AND Products_Id IN (SELECT Id From Products WHERE Name=\"${ProductName}\")`
+  connection.query(removeQuery, (err, rows) => {
+    if (err) throw err
+    res.status(200).send()
+  })
+})
+
+app.post('/add/favourite', (req, res) => {
+  const UserId = req.body.id
+  const ProductName = req.body.name
+  const FindProductQuery = `SELECT * FROM Products WHERE Name=${ProductName}`
+  connection.query(FindProductQuery, (err, rows) => {
+    if (err) throw err
+    if (rows.length > 0) {
+      connection.query(`INSERT INTO Favourite_Products (User_Id, Products_Id) VALUES (${UserId},${rows[0].Id})`, (err, rows) => {
+        if (err) throw err
+        res.status(200).send()
+      })
+    }
+    else {
+      res.status(403).send()
+    }
+  })
+})
+
+app.post('/remove/favourite', (req, res) => {
+  const UserId = req.body.id
+  const ProductName = req.body.name
+  const removeQuery = `DELETE FROM Favourite_Products WHERE User_Id=${UserId} AND Products_Id IN (SELECT Id From Products WHERE Name=\"${ProductName}\")`
   connection.query(removeQuery, (err, rows) => {
     if (err) throw err
     res.status(200).send()
