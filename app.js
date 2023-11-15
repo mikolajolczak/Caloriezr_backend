@@ -138,10 +138,19 @@ app.post('/add/favourite', (req, res) => {
 app.post('/remove/recent', (req, res) => {
   const UserId = req.body.id
   const ProductName = req.body.name
-  const removeQuery = `DELETE FROM Recent_Products WHERE User_Id=${UserId} AND Products_Id IN (SELECT Id From Products WHERE Name=${ProductName})`
-  connection.query(removeQuery, (err, rows) => {
+  const getProductQuery = `SELECT Id From Products WHERE Name=${ProductName}`
+  
+  connection.query(getProductQuery, (err, rows) => {
     if (err) throw err
-    res.status(200).send()
+    if (rows.length > 0) {
+      const removeQuery = `DELETE FROM Recent_Products WHERE User_Id=${UserId} AND Products_Id=${rows[0].Id}`
+      connection.query(removeQuery, (err, rows) => {
+        if (err) throw err
+        res.status(200).send()
+      })
+    } else {
+      res.status(403).send()
+    }
   })
 })
 
