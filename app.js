@@ -148,7 +148,7 @@ app.post('/remove/recent', (req, res) => {
 app.post('/add/favourite', (req, res) => {
   const UserId = req.body.id
   const ProductName = req.body.name
-  const FindProductQuery = `SELECT * FROM Products WHERE Name=${ProductName}`
+  const FindProductQuery = `SELECT * FROM Products WHERE Name=\"${ProductName}\"`
   connection.query(FindProductQuery, (err, rows) => {
     if (err) throw err
     if (rows.length > 0) {
