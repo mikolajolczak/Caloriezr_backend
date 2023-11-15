@@ -173,6 +173,15 @@ app.post('/remove/favourite', (req, res) => {
   })
 })
 
+app.post('/meal', (req, res) => {
+  const UserId = req.body.id
+  const getMealsQuery = `SELECT * From Food_User WHERE User_Id=${UserId}`
+  connection.query(getMealsQuery, (err, rows) => {
+    if (err) throw err
+    res.status(200).send({meals: rows})
+  })
+})
+
 const PORT = parseInt(process.env.PORT) || 8080;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
