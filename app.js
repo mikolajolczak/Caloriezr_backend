@@ -124,11 +124,24 @@ app.post('/add/favourite', (req, res) => {
   connection.query(FindProductQuery, (err, rows) => {
     if (err) throw err
     if (rows.length > 0) {
-      connection.query(`INSERT INTO Recent_Products (User_Id, Products_Id) VALUES (${UserId},${rows[0].Id});`, (err, rows) => {
+      connection.query(`INSERT INTO Recent_Products (User_Id, Products_Id) VALUES (${UserId},${rows[0].Id})`, (err, rows) => {
         if (err) throw err
         res.status(200).send()
       })
     }
+    else {
+      res.status(403).send()
+    }
+  })
+})
+
+app.post('/remove/recent', (req, res) => {
+  const UserId = req.body.id
+  const ProductName = req.body.name
+  const removeQuery = `DELETE FROM Recent_Products WHERE Products_Id IN (SELECT Id From Products WHERE Name=${ProductName}) AND User_Id=${UserId}`
+  connection.query(removeQuery, (err, rows) => {
+    if (err) throw err
+    res.status(200).send()
   })
 })
 
