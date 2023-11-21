@@ -175,7 +175,7 @@ app.post('/remove/favourite', (req, res) => {
 
 app.post('/meal', (req, res) => {
   const UserId = req.body.id
-  const getMealsQuery = `SELECT * From FoodEvents, Food_User WHERE Id IN (SELECT Food_Id From Food_User WHERE User_Id=${req.body.id}) AND Food_User.Food_Id=FoodEvents.Id`
+  const getMealsQuery = `SELECT * From FoodEvents, Food_User WHERE Id IN (SELECT Food_Id From Food_User WHERE User_Id=${UserId}) AND Food_User.Food_Id=FoodEvents.Id`
   connection.query(getMealsQuery, (err, rows) => {
     if (err) throw err
     res.status(200).send({meals: rows})
