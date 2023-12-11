@@ -182,6 +182,44 @@ app.post('/meal', (req, res) => {
   })
 })
 
+app.post('/get/user', (req, res) => {
+  const Password = req.body.password;
+  const Email = req.body.email;
+  const getUserByIdQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
+  connection.query(getUserByIdQuery, [Password,Email], (err, rows) => {
+    if (err) throw err
+    if (rows.length > 0) {
+      res.status(200).send({ name: rows[0].Name, timezone: rows[0].Timezone})
+    }
+    else {
+      res.status(400).send()
+    }
+  })
+})
+
+app.post('/add/user', (req, res) => {
+  const Password = req.body.password;
+  const Email = req.body.email
+  const Name = req.body.name
+  const Timezone = req.body.timezone
+  const addUserQuery = `INSERT INTO Users (Password, Email, Name, Timezone) VALUES (?,?,?,?)`
+  connection.query(addUserQuery, [Password, Email, Name, Timezone], (err, rows) => {
+    if (err) {
+      res.status(500).send()
+      throw err
+    };
+    res.status(200).send()
+  })
+})
+
+app.post('/add/walk', (req, res) => {
+  const Steps = req.body.steps  
+  const Date_Start = req.body.date_start
+  const Password = req.body.password
+  const Email = req.body.email
+  const checkIfNewWalk = 'SELECT COUNT(*) FROM Walks, Users WHERE Walks.User_Id IN (SELECT * FROM Users WHERE Password = ? AND Email = ?) AND Date_End <= ?'
+})
+
 const PORT = parseInt(process.env.PORT) || 8080;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
