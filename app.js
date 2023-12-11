@@ -217,7 +217,39 @@ app.post('/add/walk', (req, res) => {
   const Date_Start = req.body.date_start
   const Password = req.body.password
   const Email = req.body.email
-  const checkIfNewWalk = 'SELECT COUNT(*) FROM Walks, Users WHERE Walks.User_Id IN (SELECT * FROM Users WHERE Password = ? AND Email = ?) AND Date_End <= ?'
+  const Length = req.body.length
+  const checkIfNewWalk = `SELECT * From Walks WHERE User_Id IN (SELECT Id FROM Users WHERE Password = ? AND Email = ?) ORDER BY Date_End DESC`
+  connection.query(checkIfNewWalk, [Password, Email], (err, rows) => {
+    if (err) {
+      res.status(500).send()
+      throw err
+    }
+    if (rows.length > 0) {
+      if (rows[0].Date_End < new Date() || rows[0].Date_End.getTime() + 60 * 1000 >= new Date().getTime()) {
+        //new walk
+        const insertNewWalk = `INSERT INTO Walks (Steps, Date_Start, Date_End, Length, User_Id) VALUES (?, ?, ?, ?, (SELECT Id FROM Users WHERE Password = ? AND Email = ?));`
+        connection.query(insertNewWalk, [Steps, Date_Start, new Date(), Length, Password, Email], (err, rows) => {
+          if (err) {
+            res.status(500).send()
+            throw err
+          }
+          res.status(200).send()
+        })
+      } else {
+        //update old
+        const updateWalk = `UPDATE Walks SET Steps=?, Date_End=?, Length=? WHERE Id=?`
+        connection.query(insertNewWalk, [rows[0].Steps+Steps, new Date(), rows[0].Length+Length, rows[0].Id], (err, rows) => {
+          if (err) {
+            res.status(500).send()
+            throw err
+          }
+          res.status(200).send()
+        })
+      }
+    } else {
+      res.status(403).send()
+    }
+  })
 })
 
 const PORT = parseInt(process.env.PORT) || 8080;
