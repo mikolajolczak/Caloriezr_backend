@@ -218,15 +218,16 @@ app.post('/add/walk', (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
   const Length = req.body.length
-  const checkIfNewWalk = `SELECT * From Walks WHERE User_Id IN (SELECT Id FROM Users WHERE Password = ? AND Email = ?) ORDER BY Date_End DESC`
-  connection.query(checkIfNewWalk, [Password, Email], (err, rows) => {
+  const findUserQuery = `SELECT Id FROM Users WHERE Password = ? AND Email = ?`
+  connection.query(findUserQuery, [Password, Email], (err, rows) => {
     if (err) {
       res.status(500).send()
       throw err
     }
     if (rows.length > 0) {
-      if (new Date() > new Date(rows[0].Date_End)) {
-        if (new Date(rows[0].Date_End).getHours()*60 + new Date(rows[0].Date_End).getMinutes() + 10 < new Date().getHours()*60 + new Date().getMinutes()) {
+      const findAllWalksFromUser = `SELECT * FROM Walks WHERE User_Id = ?`
+      connection.query(findAllWalksFromUser,[rows[0].Id],(err,rows2)=>{if (new Date() > new Date(rows2[0].Date_End)) {
+        if (new Date(rows2[0].Date_End).getHours()*60 + new Date(rows2[0].Date_End).getMinutes() + 10 < new Date().getHours()*60 + new Date().getMinutes()) {
           //new walk
         const insertNewWalk = `INSERT INTO Walks (Steps, Date_Start, Date_End, Length, User_Id) VALUES (?, ?, ?, ?, (SELECT Id FROM Users WHERE Password = ? AND Email = ?));`
         connection.query(insertNewWalk, [Steps, new Date(Date_Start), new Date(), Length, Password, Email], (err, rows) => {
@@ -239,7 +240,7 @@ app.post('/add/walk', (req, res) => {
         } else {
           //update old
         const updateWalk = `UPDATE Walks SET Steps=?, Date_End=?, Length=? WHERE Id=?`
-        connection.query(insertNewWalk, [rows[0].Steps+Steps, new Date(), rows[0].Length+Length, rows[0].Id], (err, rows) => {
+        connection.query(insertNewWalk, [rows2[0].Steps+Steps, new Date(), rows2[0].Length+Length, rows2[0].Id], (err, rows) => {
           if (err) {
             res.status(500).send(err)
             throw err
@@ -247,7 +248,8 @@ app.post('/add/walk', (req, res) => {
           res.status(200).send()
         })
         }
-      }
+      }})
+      
     } else {
       res.status(403).send()
     }
