@@ -229,7 +229,7 @@ app.post('/add/walk', (req, res) => {
         if (new Date(rows[0].Date_End).getHours()*60 + new Date(rows[0].Date_End).getMinutes() + 10 > new Date().getHours()*60 + new Date().getMinutes()) {
           //new walk
         const insertNewWalk = `INSERT INTO Walks (Steps, Date_Start, Date_End, Length, User_Id) VALUES (?, ?, ?, ?, (SELECT Id FROM Users WHERE Password = ? AND Email = ?));`
-        connection.query(insertNewWalk, [Steps, Date_Start, new Date(), Length, Password, Email], (err, rows) => {
+        connection.query(insertNewWalk, [Steps, new Date(Date_Start), new Date(), Length, Password, Email], (err, rows) => {
           if (err) {
             res.status(500).send(err)
             throw err
