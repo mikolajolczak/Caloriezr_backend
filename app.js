@@ -225,8 +225,9 @@ app.post('/add/walk', (req, res) => {
       throw err
     }
     if (rows.length > 0) {
-      if (rows[0].Date_End < new Date() || rows[0].Date_End.getTime() + 60 * 1000 >= new Date().getTime()) {
-        //new walk
+      if (new Date() > new Date(rows[0].Date_End)) {
+        if (new Date(rows[0].Date_End).getTime() + 60 * 1000 >= new Date().getTime()) {
+          //new walk
         const insertNewWalk = `INSERT INTO Walks (Steps, Date_Start, Date_End, Length, User_Id) VALUES (?, ?, ?, ?, (SELECT Id FROM Users WHERE Password = ? AND Email = ?));`
         connection.query(insertNewWalk, [Steps, Date_Start, new Date(), Length, Password, Email], (err, rows) => {
           if (err) {
@@ -235,8 +236,8 @@ app.post('/add/walk', (req, res) => {
           }
           res.status(200).send()
         })
-      } else {
-        //update old
+        } else {
+          //update old
         const updateWalk = `UPDATE Walks SET Steps=?, Date_End=?, Length=? WHERE Id=?`
         connection.query(insertNewWalk, [rows[0].Steps+Steps, new Date(), rows[0].Length+Length, rows[0].Id], (err, rows) => {
           if (err) {
@@ -245,6 +246,7 @@ app.post('/add/walk', (req, res) => {
           }
           res.status(200).send()
         })
+        }
       }
     } else {
       res.status(403).send()
