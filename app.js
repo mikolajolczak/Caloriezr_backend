@@ -3,10 +3,10 @@ const mysql = require('mysql');
 const app = express();
 const createUnixSocketPool = () => {
   return mysql.createConnection({
-    user: "dbuser",
-    password: "7asQoeLN+5=5.)$K",
-    database: "caloriezr2",
-    host: "34.118.75.136",
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    socketPath: process.env.INSTANCE_UNIX_SOCKET,
   });
 };
 
