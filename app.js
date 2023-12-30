@@ -614,12 +614,13 @@ const getProductsFromMeal = async (password, email, startingdate) => {
   const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
   try {
     const meals = await getMealsFromUser(password, email, startingdate)
-    for (const meal of meals) {
+    for (let meal of meals) {
       const products = async (meal) => {
         return new Promise((resolve, reject) => {
           connection.query(getProductsQuery, [meal.Id], function (error, results, fields) {
             if (error) reject(error)
             meal.products = results
+            console.log(meal)
             resolve(meal)
           })
         })
@@ -639,6 +640,7 @@ const getUser = async (password, email) => {
     connection.query(getUserQuery, [password, email], (err, users) => { 
       if (err)
         reject(err)
+      console.log(users[0])
       resolve(users[0])
     })
   })
@@ -652,6 +654,7 @@ const getMealsFromUser = async (password, email, startingdate) => {
       connection.query(getMealsQuery, [user.Id, new Date(startingdate), new Date(new Date(startingdate).getFullYear(), new Date(startingdate).getMonth(), new Date(startingdate).getDate() + 7)], (err, meals) => { 
         if (err)
           reject(err)
+        console.log(meals)
         resolve(meals)
       })
     })
