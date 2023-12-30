@@ -133,7 +133,7 @@ app.post('/get/user', (req, res) => {
   connection.query(getUserQuery, [Password,Email], (err, rows) => {
     if (err) throw err
     if (rows.length > 0) {
-      res.status(200).send({ name: rows[0].Name, timezone: rows[0].Timezone})
+      res.status(200).send({ name: rows[0].Name, timezone: rows[0].Timezone, step_limit: rows[0].Step_Limit, water_limit: rows[0].Water_Limit})
     }
     else {
       res.status(400).send()
