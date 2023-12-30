@@ -620,14 +620,13 @@ const getProductsFromMeal = async (password, email, startingdate) => {
           connection.query(getProductsQuery, [meal.Id], function (error, results, fields) {
             if (error) reject(error)
             meal.products = results
-            console.log(meal)
             resolve(meal)
           })
         })
       }
       await products(meal)
     }
-
+    return meals;
   } catch (error) {
     console.error(error)
     throw error
@@ -640,7 +639,6 @@ const getUser = async (password, email) => {
     connection.query(getUserQuery, [password, email], (err, users) => { 
       if (err)
         reject(err)
-      console.log(users[0])
       resolve(users[0])
     })
   })
@@ -654,7 +652,6 @@ const getMealsFromUser = async (password, email, startingdate) => {
       connection.query(getMealsQuery, [user.Id, new Date(startingdate), new Date(new Date(startingdate).getFullYear(), new Date(startingdate).getMonth(), new Date(startingdate).getDate() + 7)], (err, meals) => { 
         if (err)
           reject(err)
-        console.log(meals)
         resolve(meals)
       })
     })
