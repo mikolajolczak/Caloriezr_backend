@@ -141,7 +141,7 @@ app.post('/get/user', (req, res) => {
   })
 })
 
-app.post('/change/steps', (req, res) => {
+app.post('/change/walk/limit', (req, res) => {
   const Password = req.body.password;
   const Email = req.body.email;
   const NewLimit = req.body.new_limit
@@ -737,7 +737,7 @@ app.post('/get/weekly/water', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const getWeeklyWatersQuery = `SELECT * FROM Water_Users WHERE User_Id = ? AND Date  BETWEEN ? AND ?;`
+      const getWeeklyWatersQuery = `SELECT * FROM Water_Users WHERE User_Id = ? AND Date BETWEEN ? AND ?;`
       connection.query(getWeeklyWatersQuery, [users[0].Id, new Date(startingDate), new Date(new Date(Date_Start).getFullYear(), new Date(Date_Start).getMonth(), new Date(Date_Start).getDate() + 7)], (err, rows) => {
         if (err) {
           res.status(500).send()
