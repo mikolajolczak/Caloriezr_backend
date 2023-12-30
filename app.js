@@ -627,8 +627,8 @@ app.post('/get/weekly/meals', (req, res) => {
           res.status(500).send()
           throw err
         }
-        const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Meal_Id = ?`
-        for (let i = 0; i <= meals.length; i++){
+        const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
+        for (let i = 0; i < meals.length; i++){
           connection.query(getProductsQuery, [meals[i].Meal_Id], (err, products) => {
             if (err) {
               res.status(500).send()
