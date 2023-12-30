@@ -610,6 +610,17 @@ app.post('/get/meal/name', (req, res) => {
   })
 }) // get meal names TOP5
 
+const getProductsFromMeal = async (meal) => {
+  const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
+  return new Promise((resolve, reject) => {
+    connection.query(getProductsQuery, [meal.Id], function (error, results, fields) {
+      if (error) reject(error)
+      meal.products = results
+      resolve(meal)
+    })
+  })
+}
+
 app.post('/get/weekly/meals', async (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
@@ -622,21 +633,15 @@ app.post('/get/weekly/meals', async (req, res) => {
     }
     if (users.length > 0) {
       const getMealsQuery = `SELECT * FROM Meal_Users INNER JOIN Meals ON Meal_Users.Meal_Id = Meals.Id WHERE User_Id = ? AND Meal_Users.Date BETWEEN ? AND ?`
-      await connection.query(getMealsQuery, [users[0].Id, new Date(StartingDate), new Date(new Date(StartingDate).getFullYear(), new Date(StartingDate).getMonth(), new Date(StartingDate).getDate() + 7)], async (err, meals) => {
+      connection.query(getMealsQuery, [users[0].Id, new Date(StartingDate), new Date(new Date(StartingDate).getFullYear(), new Date(StartingDate).getMonth(), new Date(StartingDate).getDate() + 7)], async (err, meals) => {
         if (err) {
           res.status(500).send()
           throw err
         }
-        const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
-        await Promise.all(meals.map(async (meal,index) => {
-          await connection.query(getProductsQuery, [meal.Id], (err, products) => {
-            if (err) {
-              res.status(500).send()
-              throw err
-            }
-            meals[index] = { ...meals[index], Products: products }
-          })
-        }))
+        for (let i = 0; i < meals.length; i++) {
+          let meal = meals[i];
+          await getProductsFromMeal(meal);
+        }
         res.status(200).send(meals)        
       })
     }
