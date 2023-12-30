@@ -4,4 +4,4 @@ env_variables:
   INSTANCE_UNIX_SOCKET: /cloudsql/shaped-glazing-402314:europe-central2:caloriezr-db
   DB_USER: dbuser
   DB_PASS: 7asQoeLN+5=5.)$K
-  DB_NAME: caloriezr2
+  DB_NAME: caloriezr3
