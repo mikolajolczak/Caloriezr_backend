@@ -152,7 +152,7 @@ app.post('/change/steps', (req, res) => {
       throw err
     }
     if (rows.length > 0) {
-      const updateStepLimitQuery = `Update Users SET Step_Limit = ? WHERE User_Id = ?`
+      const updateStepLimitQuery = `Update Users SET Step_Limit = ? WHERE Id = ?`
       connection.query(updateStepLimitQuery, [NewLimit, rows[0].Id], (err, rows) => {
         if (err) {
           res.status(500).send()
