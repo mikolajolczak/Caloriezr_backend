@@ -610,26 +610,26 @@ app.post('/get/meal/name', (req, res) => {
   })
 }) // get meal names TOP5
 
-app.post('/get/weekly/meals', (req, res) => {
+app.post('/get/weekly/meals', async (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
   const StartingDate = req.body.date
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
-  connection.query(getUserQuery, [Password, Email], (err, users) => {
+  connection.query(getUserQuery, [Password, Email], async (err, users) => {
     if (err) {
       res.status(403).send()
       throw err
     }
     if (users.length > 0) {
       const getMealsQuery = `SELECT * FROM Meal_Users INNER JOIN Meals ON Meal_Users.Meal_Id = Meals.Id WHERE User_Id = ? AND Meal_Users.Date BETWEEN ? AND ?`
-      connection.query(getMealsQuery, [users[0].Id, new Date(StartingDate), new Date(new Date(StartingDate).getFullYear(), new Date(StartingDate).getMonth(), new Date(StartingDate).getDate() + 7)], async (err, meals) => {
+      await connection.query(getMealsQuery, [users[0].Id, new Date(StartingDate), new Date(new Date(StartingDate).getFullYear(), new Date(StartingDate).getMonth(), new Date(StartingDate).getDate() + 7)], async (err, meals) => {
         if (err) {
           res.status(500).send()
           throw err
         }
         const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
         await Promise.all(meals.map(async (meal,index) => {
-          connection.query(getProductsQuery, [meal.Id], (err, products) => {
+          await connection.query(getProductsQuery, [meal.Id], (err, products) => {
             if (err) {
               res.status(500).send()
               throw err
