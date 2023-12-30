@@ -224,7 +224,7 @@ app.post('/get/weekly/walk', (req, res) => {
       throw err
     }
     if (rows.length > 0) {
-      const getWeeklyWalksQuery = `SELECT Steps, Date_Start, Date_End, Length FROM Walks WHERE Date_Start >= ? AND Date_Start < ? AND User_Id = ?`
+      const getWeeklyWalksQuery = `SELECT Steps, Date_Start, Date_End, Length FROM Walks WHERE Date_Start >= ? AND Date_Start < ? AND User_Id = ? ORDER BY Date_End`
       connection.query(getWeeklyWalksQuery, [new Date(Date_Start), new Date(new Date(Date_Start).getFullYear(), new Date(Date_Start).getMonth(), new Date(Date_Start).getDate() + 7), rows[0].Id], (err, rows) => {
         if (err) {
           res.status(500).send()
