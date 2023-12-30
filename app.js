@@ -610,42 +610,68 @@ app.post('/get/meal/name', (req, res) => {
   })
 }) // get meal names TOP5
 
-const getProductsFromMeal = async (meal) => {
+const getProductsFromMeal = async (password, email, startingdate) => {
   const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
+  try {
+    const meals = await getMealsFromUser(password, email, startingdate)
+    for (const meal of meals) {
+      const products = async (meal) => {
+        return new Promise((resolve, reject) => {
+          connection.query(getProductsQuery, [meal.Id], function (error, results, fields) {
+            if (error) reject(error)
+            meal.products = results
+            resolve(meal)
+          })
+        })
+      }
+      await products(meal)
+    }
+
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
+const getUser = async (password, email) => {
+  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   return new Promise((resolve, reject) => {
-    connection.query(getProductsQuery, [meal.Id], function (error, results, fields) {
-      if (error) reject(error)
-      meal.products = results
-      resolve(meal)
+    connection.query(getUserQuery, [password, email], (err, users) => { 
+      if (err)
+        reject(err)
+      resolve(users[0])
     })
   })
+}
+
+const getMealsFromUser = async (password, email, startingdate) => {
+  const getMealsQuery = `SELECT * FROM Meal_Users INNER JOIN Meals ON Meal_Users.Meal_Id = Meals.Id WHERE User_Id = ? AND Meal_Users.Date BETWEEN ? AND ?`
+  try {
+    const user = await getUser(password, email)
+    return new Promise((resolve, reject) => {
+      connection.query(getMealsQuery, [user.Id, new Date(startingdate), new Date(new Date(startingdate).getFullYear(), new Date(startingdate).getMonth(), new Date(startingdate).getDate() + 7)], (err, meals) => { 
+        if (err)
+          reject(err)
+        resolve(meals)
+      })
+    })
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
 }
 
 app.post('/get/weekly/meals', async (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
   const StartingDate = req.body.date
-  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
-  connection.query(getUserQuery, [Password, Email], async (err, users) => {
-    if (err) {
-      res.status(403).send()
-      throw err
-    }
-    if (users.length > 0) {
-      const getMealsQuery = `SELECT * FROM Meal_Users INNER JOIN Meals ON Meal_Users.Meal_Id = Meals.Id WHERE User_Id = ? AND Meal_Users.Date BETWEEN ? AND ?`
-      connection.query(getMealsQuery, [users[0].Id, new Date(StartingDate), new Date(new Date(StartingDate).getFullYear(), new Date(StartingDate).getMonth(), new Date(StartingDate).getDate() + 7)], async (err, meals) => {
-        if (err) {
-          res.status(500).send()
-          throw err
-        }
-        for (let i = 0; i < meals.length; i++) {
-          let meal = meals[i];
-          await getProductsFromMeal(meal);
-        }
-        res.status(200).send(meals)        
-      })
-    }
-  })
+  try {
+    const dataToSend = await getProductsFromMeal(Password, Email, StartingDate);
+    res.status(200).send(dataToSend)
+  } catch (error) {
+    res.status(500).send()
+    console.error(error)
+  }
   
 })// get all meals products for them and their macros week
 
