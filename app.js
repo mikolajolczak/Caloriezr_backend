@@ -634,11 +634,9 @@ app.post('/get/weekly/meals', (req, res) => {
               res.status(500).send()
               throw err
             }
-            meals[i] = {...meals[i], "Products": products }
+            meals[i] = {...meals[i], Products: products }
           })
         }
-        console.log(meals[0])
-        console.log(meals)
         res.status(200).send(meals)        
       })
     }
