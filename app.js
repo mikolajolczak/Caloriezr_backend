@@ -621,7 +621,7 @@ app.post('/get/weekly/meals', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const getMealsQuery = `SELECT * FROM Meal_Users INNER JOIN Meals ON Meal_Users.Meal_Id = Meals.Id WHERE User_Id = ? AND Meal_Users.Date BETWEEN ? AND ? ORDER BY Meal_Users.Date;`
+      const getMealsQuery = `SELECT * FROM Meal_Users INNER JOIN Meals ON Meal_Users.Meal_Id = Meals.Id WHERE User_Id = ? AND Meal_Users.Date BETWEEN ? AND ?`
       connection.query(getMealsQuery, [users[0].Id, new Date(StartingDate), new Date(new Date(StartingDate).getFullYear(), new Date(StartingDate).getMonth(), new Date(StartingDate).getDate() + 7)], (err, meals) => {
         if (err) {
           res.status(500).send()
