@@ -133,7 +133,7 @@ app.post('/get/user', (req, res) => {
   connection.query(getUserQuery, [Password,Email], (err, rows) => {
     if (err) throw err
     if (rows.length > 0) {
-      res.status(200).send({ name: rows[0].Name, step_limit: rows[0].Step_Limit, water_limit: rows[0].Water_Limit, calories_limit: rows[0].Calories_limit,carbs_limit: rows[0].Carbs_limit,fats_limit: rows[0].Fats_limit,Proteins_limit: rows[0].Proteins_limit})
+      res.status(200).send({ name: rows[0].Name, step_limit: rows[0].Step_Limit, water_limit: rows[0].Water_Limit, calories_limit: rows[0].Calories_Limit,carbs_limit: rows[0].Carbs_Limit,fats_limit: rows[0].Fats_Limit,Proteins_limit: rows[0].Proteins_Limit})
     }
     else {
       res.status(400).send()
