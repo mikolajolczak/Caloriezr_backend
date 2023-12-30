@@ -622,26 +622,22 @@ app.post('/get/weekly/meals', (req, res) => {
     }
     if (users.length > 0) {
       const getMealsQuery = `SELECT * FROM Meal_Users INNER JOIN Meals ON Meal_Users.Meal_Id = Meals.Id WHERE User_Id = ? AND Meal_Users.Date BETWEEN ? AND ?`
-      connection.query(getMealsQuery, [users[0].Id, new Date(StartingDate), new Date(new Date(StartingDate).getFullYear(), new Date(StartingDate).getMonth(), new Date(StartingDate).getDate() + 7)], (err, meals) => {
-        let mealsToSend = meals
+      connection.query(getMealsQuery, [users[0].Id, new Date(StartingDate), new Date(new Date(StartingDate).getFullYear(), new Date(StartingDate).getMonth(), new Date(StartingDate).getDate() + 7)], async (err, meals) => {
         if (err) {
           res.status(500).send()
           throw err
         }
-        console.log(mealsToSend)
         const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
-        for (let i = 0; i < mealsToSend.length; i++){
-          connection.query(getProductsQuery, [mealsToSend[i].Id], (err, products) => {
+        await Promise.all(meals.map(async (meal,index) => {
+          connection.query(getProductsQuery, [meal.Id], (err, products) => {
             if (err) {
               res.status(500).send()
               throw err
             }
-            mealsToSend[i] = { ...mealsToSend[i], Products: "error" }
-            console.log(mealsToSend[i])
+            meals[index] = { ...meals[index], Products: products }
           })
-        }
-        console.log(mealsToSend)
-        res.status(200).send(mealsToSend)        
+        }))
+        res.status(200).send(meals)        
       })
     }
   })
