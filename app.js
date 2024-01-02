@@ -325,7 +325,7 @@ app.post('/get/products/recent', (req, res) => {
       throw err
     }
     if (rows.length > 0) {
-      const getRecentProducts = `SELECT * FROM Recent_Searched LEFT JOIN Products ON Recent_Searched.Product_Id = Products.Id LEFT JOIN Product_Groups ON Products.Group_Id = Product_Groups.Id WHERE Recent_Searched.User_Id = ? ORDER BY Products.Id`
+      const getRecentProducts = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Name, Name, Calories FROM Recent_Searched INNER JOIN Products ON Recent_Searched.Product_Id = Products.Id INNER JOIN Product_Groups ON Products.Group_Id = Product_Groups.Id WHERE Recent_Searched.User_Id = ? ORDER BY Products.Id`
       connection.query(getRecentProducts, [rows[0].Id], (err, rows) => {
         if (err) {
           res.status(500).send()
