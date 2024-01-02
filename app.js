@@ -412,7 +412,7 @@ app.post('/get/product/name', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const getProductByBarcodeQuery = `SELECT * FROM Products WHERE Name LIKE ? LIMIT 5`
+      const getProductByBarcodeQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Name, Name, Calories FROM Products WHERE Name LIKE ? LIMIT 5`
       connection.query(getProductByBarcodeQuery, ['%' + Name + '%'], (err, products) => {
         if (err) {
           res.status(403).send()
