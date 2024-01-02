@@ -305,7 +305,7 @@ app.post('/get/products/favourite', (req, res) => {
             res.status(200).send(rows)
         }
         else {
-          res.status(200).send()
+          res.status(200).send([])
         }
       })
     }
@@ -335,7 +335,7 @@ app.post('/get/products/recent', (req, res) => {
             res.status(200).send(rows)
         }
         else {
-          res.status(200).send()
+          res.status(200).send([])
         }
       })
     }
