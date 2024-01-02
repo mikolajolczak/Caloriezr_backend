@@ -415,7 +415,7 @@ app.post('/get/product/name', (req, res) => {
       const getProductByBarcodeQuery = `SELECT Products.Id Score, Size, Unit, Barcode, Group_Name, Name, Calories FROM Products INNER JOIN Product_Groups ON Products.Group_Id = Product_Groups.Id WHERE Name LIKE ? LIMIT 5`
       connection.query(getProductByBarcodeQuery, ['%' + Name + '%'], (err, products) => {
         if (err) {
-          res.status(403).send()
+          res.status(500).send()
           throw err
         }
         res.status(200).send(products)
