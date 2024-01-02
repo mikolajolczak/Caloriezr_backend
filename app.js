@@ -619,7 +619,21 @@ const getProductsFromMeal = async (password, email, startingdate) => {
         return new Promise((resolve, reject) => {
           connection.query(getProductsQuery, [meal.Id], function (error, results) {
             if (error) reject(error)
+            let calories = 0
+            let proteins = 0
+            let carbs = 0
+            let fats = 0
+            results.forEach(product => {
+              calories += product.Calories;
+              carbs += product.Carbons;
+              proteins += product.Proteins;
+              fats += product.Fats;
+            });
             meal.products = results
+            meal.calories = calories
+            meal.proteins = proteins
+            meal.carbs = carbs
+            meal.fats = fats
             resolve(meal)
           })
         })
