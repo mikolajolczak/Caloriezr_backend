@@ -295,7 +295,7 @@ app.post('/get/products/favourite', (req, res) => {
       throw err
     }
     if (rows.length > 0) {
-      const getFavouriteProducts = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Name, Name, Calories FROM Favourite_Products LEFT JOIN Products ON Favourite_Products.Product_Id = Products.Id LEFT JOIN Product_Groups ON Products.Group_Id = Product_Groups.Id WHERE Favourite_Products.User_Id = ? ORDER BY Products.Id`
+      const getFavouriteProducts = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Name, Name, Calories FROM Favourite_Products INNER JOIN Products ON Favourite_Products.Product_Id = Products.Id INNER JOIN Product_Groups ON Products.Group_Id = Product_Groups.Id WHERE Favourite_Products.User_Id = ? ORDER BY Products.Id`
       connection.query(getFavouriteProducts, [rows[0].Id], (err, rows) => {
         if (err) {
           res.status(500).send()
@@ -379,7 +379,7 @@ app.post('/get/product/info', (req, res) => {
               })
             }
           })
-          const getProductIngredients = `SELECT * FROM Products_Ingredients LEFT JOIN Ingredients ON Products_Ingredients.Ingredient_Id = Ingredients.Id LEFT JOIN Ingredient_Types ON Ingredient_Types.Id = Ingredients.Type_Id WHERE Products_Ingredients.Product_Id = ? ORDER BY Products_Ingredients.Product_Id`
+          const getProductIngredients = `SELECT * FROM Products_Ingredients INNER JOIN Ingredients ON Products_Ingredients.Ingredient_Id = Ingredients.Id INNER JOIN Ingredient_Types ON Ingredient_Types.Id = Ingredients.Type_Id WHERE Products_Ingredients.Product_Id = ? ORDER BY Products_Ingredients.Product_Id`
           connection.query(getProductIngredients, [products[0].Id], (err, ingredients) => {
             if (err) {
               res.status(500).send()
