@@ -613,11 +613,11 @@ app.post('/get/meal/name', (req, res) => {
 const getProductsFromMeal = async (password, email, startingdate) => {
   const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
   try {
-    const meals = await getMealsFromUser(password, email, startingdate)
-    for (let meal of meals) {
+    const data = await getMealsFromUser(password, email, startingdate)
+    for (let meal of data.meals) {
       const products = async (meal) => {
         return new Promise((resolve, reject) => {
-          connection.query(getProductsQuery, [meal.Id], function (error, results, fields) {
+          connection.query(getProductsQuery, [meal.Id], function (error, results) {
             if (error) reject(error)
             meal.products = results
             resolve(meal)
@@ -626,7 +626,7 @@ const getProductsFromMeal = async (password, email, startingdate) => {
       }
       await products(meal)
     }
-    return meals;
+    return data;
   } catch (error) {
     console.error(error)
     throw error
@@ -652,7 +652,7 @@ const getMealsFromUser = async (password, email, startingdate) => {
       connection.query(getMealsQuery, [user.Id, new Date(startingdate), new Date(new Date(startingdate).getFullYear(), new Date(startingdate).getMonth(), new Date(startingdate).getDate() + 7)], (err, meals) => { 
         if (err)
           reject(err)
-        resolve(meals)
+        resolve({calories_limit: user.Calories_Limit, carbs_limit: user.Carbs_Limit, proteins_limit: user.Proteins_Limit,fats_limit: user.Fats_Limit, meals: meals})
       })
     })
   } catch (error) {
