@@ -431,21 +431,21 @@ app.post('/get/product/barcode', (req, res) => {
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
-      res.status(403).send()
+      res.status(403).send([])
       throw err
     }
     if (users.length > 0) {
       const getProductByBarcodeQuery = `SELECT * FROM Products WHERE Barcode = ?`
       connection.query(getProductByBarcodeQuery, [Barcode], (err, products) => {
         if (err) {
-          res.status(403).send()
+          res.status(403).send([])
           throw err
         }
         if (products.length > 0) {
           res.status(200).send(products[0])
         }
         else {
-          res.status(404).send()
+          res.status(404).send([])
         }
       })
     }
