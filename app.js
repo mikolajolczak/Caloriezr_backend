@@ -471,7 +471,7 @@ app.post('/add/products/favourite', (req, res) => {
           throw err
         }
         if (products[0].Sum < 1) {
-          const addProductToRecent = `INSERT INTO Favourite_Products(Product_Id, User_Id) VALUES (?,?)`
+          const addProductToRecent = `INSERT INTO Favourite_Products(Product_Id, User_Id, Date_Add) VALUES (?,?, NOW())`
           connection.query(addProductToRecent, [Product_Id,users[0].Id], (err, rows) => {
             if (err) {
               res.status(403).send()
