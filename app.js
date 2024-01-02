@@ -295,7 +295,7 @@ app.post('/get/products/favourite', (req, res) => {
       throw err
     }
     if (rows.length > 0) {
-      const getFavouriteProducts = `SELECT * FROM Favourite_Products LEFT JOIN Products ON Favourite_Products.Product_Id = Products.Id LEFT JOIN Product_Groups ON Products.Group_Id = Product_Groups.Id WHERE Favourite_Products.User_Id = ? ORDER BY Products.Id`
+      const getFavouriteProducts = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Name, Name, Calories FROM Favourite_Products LEFT JOIN Products ON Favourite_Products.Product_Id = Products.Id LEFT JOIN Product_Groups ON Products.Group_Id = Product_Groups.Id WHERE Favourite_Products.User_Id = ? ORDER BY Products.Id`
       connection.query(getFavouriteProducts, [rows[0].Id], (err, rows) => {
         if (err) {
           res.status(500).send()
