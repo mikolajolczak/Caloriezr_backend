@@ -632,7 +632,8 @@ app.post('/get/meal/name', (req, res) => {
 app.post('/del/product/meal', (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
-  const Product_Id = req.body.id
+  const Product_Id = req.body.product_id
+  const Meal_Id = req.body.meal_id
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
@@ -640,8 +641,8 @@ app.post('/del/product/meal', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const getMealsByNameQuery = `DELETE FROM FROM Meals WHERE Id = ?`
-      connection.query(getMealsByNameQuery, [Product_Id], (err, meals) => {
+      const getMealsByNameQuery = `DELETE FROM FROM Products_Meals WHERE Product_Id = ? AND Meal_Id = ?`
+      connection.query(getMealsByNameQuery, [Product_Id,Meal_Id], (err, meals) => {
         if (err) {
           res.status(500).send([])
           throw err
