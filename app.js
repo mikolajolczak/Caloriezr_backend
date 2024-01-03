@@ -393,7 +393,19 @@ app.post('/get/product/info', (req, res) => {
                 throw err
               }
               products[0] = { ...products[0], "Macros": macros }
-              res.status(200).send(products[0])
+              const getFavouriteQuery = `SELECT * FROM Favourite_Products WHERE Product_Id = ? AND User_Id = ?`
+              connection.query(getFavouriteQuery, [products[0].Id, users[0].Id], (err, rows) => {
+                if (err) {
+                  res.status(500).send([])
+                  throw err
+                }
+                if (rows.length > 0) {
+                  products[0] = {...products[0], "isFavourite": true}
+                } else {
+                  products[0] = {...products[0], "isFavourite": false}
+                }
+                res.status(200).send(products[0])
+              })
             })
           })
           
