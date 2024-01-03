@@ -385,9 +385,16 @@ app.post('/get/product/info', (req, res) => {
               res.status(500).send([])
               throw err
             }
-            console.log(ingredients)
-            products[0] = {...products[0], "Ingredients": ingredients}
-            res.status(200).send(products[0])
+            products[0] = { ...products[0], "Ingredients": ingredients }
+            const getProductMacros = `SELECT * FROM Macros_Products INNER JOIN Macros ON Macros_Products.Macros_Id = Macros.Id INNER JOIN Macro_Groups ON Macros.Group_Id = Macro_Groups.Id WHERE Macros_Products.Products_Id = ?`
+            connection.query(getProductMacros, [products[0].Id], (err, macros) => {
+              if (err) {
+                res.status(500).send([])
+                throw err
+              }
+              products[0] = { ...products[0], "Macros": macros }
+              res.status(200).send(products[0])
+            })
           })
           
         } else {
