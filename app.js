@@ -364,7 +364,7 @@ app.post('/get/product/info', (req, res) => {
         }
         if (products.length == 1) {
           const searchProductAndUser = `SELECT COUNT(*) as Sum FROM Recent_Searched WHERE User_Id = ? AND Product_Id = ?`
-          const addProductToRecent = `INSERT INTO Recent_Searched(Product_Id, User_Id) VALUES (?,?)`
+          const addProductToRecent = `INSERT INTO Recent_Searched(Product_Id, User_Id, Date_Add) VALUES (?,?, NOW())`
           connection.query(searchProductAndUser, [users[0].Id, products[0].Id], (err, rows) => {
             if (err) {
               res.status(403).send([])
