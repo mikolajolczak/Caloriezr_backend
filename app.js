@@ -630,7 +630,7 @@ app.post('/get/meal/name', (req, res) => {
 }) // get meal names TOP5
 
 const getProductsFromMeal = async (password, email, startingdate) => {
-  const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
+  const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins, Quantity FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
   try {
     const data = await getMealsFromUser(password, email, startingdate)
     for (let meal of data.meals) {
@@ -643,10 +643,10 @@ const getProductsFromMeal = async (password, email, startingdate) => {
             let carbs = 0
             let fats = 0
             results.forEach(product => {
-              calories += product.Calories;
-              carbs += product.Carbons;
-              proteins += product.Proteins;
-              fats += product.Fats;
+              calories += product.Calories * product.Quantity;
+              carbs += product.Carbons * product.Quantity;
+              proteins += product.Proteins * product.Quantity;
+              fats += product.Fats * product.Quantity;
             });
             meal.products = results
             meal.calories = calories
