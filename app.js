@@ -641,7 +641,7 @@ app.post('/del/product/meal', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const getMealsByNameQuery = `DELETE FROM FROM Products_Meals WHERE Product_Id = ? AND Meal_Id = ?`
+      const getMealsByNameQuery = `DELETE FROM Products_Meals WHERE Product_Id = ? AND Meal_Id = ?`
       connection.query(getMealsByNameQuery, [Product_Id,Meal_Id], (err, meals) => {
         if (err) {
           res.status(500).send([])
