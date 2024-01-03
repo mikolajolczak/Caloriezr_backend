@@ -352,14 +352,14 @@ app.post('/get/product/info', (req, res) => {
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
-      res.status(403).send()
+      res.status(403).send([])
       throw err
     }
     if (users.length > 0) {
       const getProductById = `SELECT * FROM Products WHERE Id = ?`
       connection.query(getProductById, [Product_Id], (err, products) => {
         if (err) {
-          res.status(403).send()
+          res.status(403).send([])
           throw err
         }
         if (products.length == 1) {
@@ -367,13 +367,13 @@ app.post('/get/product/info', (req, res) => {
           const addProductToRecent = `INSERT INTO Recent_Searched(Product_Id, User_Id) VALUES (?,?)`
           connection.query(searchProductAndUser, [users[0].Id, products[0].Id], (err, rows) => {
             if (err) {
-              res.status(403).send()
+              res.status(403).send([])
               throw err
             }
             if (rows[0].Sum < 1) {
               connection.query(addProductToRecent, [users[0].Id, products[0].Id], (err, rows) => {
                 if (err) {
-                  res.status(403).send()
+                  res.status(403).send([])
                   throw err
                 }
               })
@@ -382,7 +382,7 @@ app.post('/get/product/info', (req, res) => {
           const getProductIngredients = `SELECT * FROM Products_Ingredients INNER JOIN Ingredients ON Products_Ingredients.Ingredient_Id = Ingredients.Id INNER JOIN Ingredient_Types ON Ingredient_Types.Id = Ingredients.Type_Id WHERE Products_Ingredients.Product_Id = ? ORDER BY Products_Ingredients.Product_Id`
           connection.query(getProductIngredients, [products[0].Id], (err, ingredients) => {
             if (err) {
-              res.status(500).send()
+              res.status(500).send([])
               throw err
             }
             console.log(ingredients)
@@ -391,12 +391,12 @@ app.post('/get/product/info', (req, res) => {
           })
           
         } else {
-          res.status(403).send()
+          res.status(403).send([])
         }
       })
       
     } else {
-      res.status(403).send()
+      res.status(403).send([])
     }
   })
 })
