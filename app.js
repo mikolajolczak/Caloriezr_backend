@@ -774,7 +774,7 @@ app.post('/add/water', (req, res) => {
           throw err
         }
         if (waters.length > 0) {
-          const updateWaterState = `UPDATE Water_Users SET  Current_Water = Current_Water + 200 WHERE Id = ?`
+          const updateWaterState = `UPDATE Water_Users SET  Drunk_Water = Drunk_Water + 200 WHERE Id = ?`
           connection.query(updateWaterState, [waters[0].Id], (err, rows) => {
             if (err) {
               res.status(500).send()
