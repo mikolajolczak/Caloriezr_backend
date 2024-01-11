@@ -945,48 +945,55 @@ app.post('/get/training/info', (req, res) => {
   })
 })
 
-app.post('/get/weekly/training', (req, res) => {
+const getTrainingsFromUser = async (password, email, startingdate) => {
+  const getUserTrainings = `SELECT * FROM Users_Trainings INNER JOIN Trainings ON Users_Trainings.Training_Id = Trainings.Id WHERE Users_Trainings.User_Id = ? AND Users_Trainings.Date_Start >= ? AND Users_Trainings.Date_End < ?`
+  try {
+    const user = await getUser(password, email)
+    return new Promise((resolve, reject) => {
+      connection.query(getUserTrainings, [user.Id, new Date(startingdate), new Date(new Date(startingdate).getFullYear(), new Date(startingdate).getMonth(), new Date(startingdate).getDate() + 7)], (err, trainings) => {
+        if (err)
+          reject(err)
+        resolve(trainings)
+      })
+    })
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
+const getExercisesFromTrainings = async (password, email, startingdate) => {
+  const getExercisesFromTrainingQuery = `SELECT * FROM Trainings_Exercises INNER JOIN Exercises ON Trainings_Exercises.Exercise_Id = Exercises.Id WHERE Trainings_Exercises.Training_Id = ?;`
+  try {
+    const trainings = await getTrainingsFromUser(password, email, startingdate)
+    for (const training of trainings) {
+      const exercises = async (training) => {
+        return new Promise((resolve, reject) => {
+          connection.query(getExercisesFromTrainingQuery, [training.Id], (err, exercises) => {
+            if (err) reject(err)
+            resolve({...training,exercises:exercises})
+           })
+        })
+      }
+      await exercises(training)
+    }
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
+app.post('/get/weekly/training', async (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
   const StartingDate = req.body.starting_date
-  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
-  connection.query(getUserQuery, [Password, Email], (err, users) => {
-    if (err) {
-      res.status(403).send()
-      throw err
-    }
-    if (users.length > 0) {
-      const getUserTrainings = `SELECT * FROM Users_Trainings INNER JOIN Trainings ON Users_Trainings.Training_Id = Trainings.Id WHERE Users_Trainings.User_Id = ? AND Users_Trainings.Date_Start >= ? AND Users_Trainings.Date_End < ?`
-      connection.query(getUserTrainings, [users[0].Id, new Date(StartingDate), new Date(new Date(StartingDate).getFullYear(), new Date(StartingDate).getMonth(), new Date(StartingDate).getDate() + 7)], (err, trainings) => {
-        if (err) {
-          res.status(500).send()
-          throw err
-        }
-        const getExercisesFromTraining = `SELECT * FROM Trainings_Exercises INNER JOIN Exercises ON Trainings_Exercises.Exercise_Id = Exercises.Id WHERE Trainings_Exercises.Training_Id = ?;`
-        for (let i = 0; i < trainings.length; i++) {
-          connection.query(getExercisesFromTraining, [trainings[i].Id], (err, exercises) => {
-            if (err) {
-              res.status(500).send()
-              throw err
-            }
-            const getBodyPartsFromTraining = `SELECT * FROM Exercises_Body_Parts INNER JOIN Body_Parts ON Exercises_Body_Parts.Body_Part_Id = Body_Parts.Id WHERE Exercises_Body_Parts.Exercise_Id  = ?`
-            for (let j = 0; j < exercises.length; j++) {
-              connection.query(getBodyPartsFromTraining, [exercises[j].Id], (err, bodyparts) => {
-                if (err) {
-                  res.status(500).send()
-                  throw err
-                }
-                exercises[j]={...exercises[j], "BodyParts": bodyparts}
-              })
-            }
-            trainings[i] = {...trainings, "Exercises": exercises}
-            res.status(200).send(exercises)
-          })
-        }
-        
-      })
-    }
-  })
+  try {
+    const dataToSend = await getExercisesFromTrainings(Password, Email, StartingDate);
+    res.status(200).send(dataToSend)
+  } catch (error) {
+    res.status(500).send()
+    console.error(error)
+  }
 })
 
 const PORT = parseInt(process.env.PORT) || 8080;
