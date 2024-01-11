@@ -953,6 +953,7 @@ const getTrainingsFromUser = async (password, email, startingdate) => {
       connection.query(getUserTrainings, [user.Id, new Date(startingdate), new Date(new Date(startingdate).getFullYear(), new Date(startingdate).getMonth(), new Date(startingdate).getDate() + 7)], (err, trainings) => {
         if (err)
           reject(err)
+        console.log(trainings)
         resolve(trainings)
       })
     })
@@ -972,6 +973,7 @@ const getExercisesFromTrainings = async (password, email, startingdate) => {
           connection.query(getExercisesFromTrainingQuery, [training.Id], (err, exercises) => {
             if (err) reject(err)
             training.exercises = exercises
+            console.log(training)
             resolve(training)
            })
         })
