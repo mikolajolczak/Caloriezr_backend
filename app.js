@@ -980,9 +980,10 @@ app.post('/get/weekly/training', (req, res) => {
               })
             }
             trainings[i] = {...trainings, "Exercises": exercises}
+            res.status(200).send(exercises)
           })
         }
-        res.status(200).send(exercises)
+        
       })
     }
   })
