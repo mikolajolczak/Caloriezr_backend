@@ -978,6 +978,7 @@ const getExercisesFromTrainings = async (password, email, startingdate) => {
       }
       await exercises(training)
     }
+    return trainings
   } catch (error) {
     console.error(error)
     throw error
