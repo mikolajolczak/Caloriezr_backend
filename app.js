@@ -971,7 +971,8 @@ const getExercisesFromTrainings = async (password, email, startingdate) => {
         return new Promise((resolve, reject) => {
           connection.query(getExercisesFromTrainingQuery, [training.Id], (err, exercises) => {
             if (err) reject(err)
-            resolve({...training,exercises:exercises})
+            training.exercises = exercises
+            resolve(training)
            })
         })
       }
