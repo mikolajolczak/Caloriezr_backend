@@ -916,6 +916,7 @@ app.post('/get/training/info', (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
   const TrainingId = req.body.id
+  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
       res.status(403).send()
@@ -948,6 +949,7 @@ app.post('/get/weekly/training', (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
   const StartingDate = req.body.starting_date
+  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
       res.status(403).send()
