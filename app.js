@@ -590,6 +590,7 @@ app.post('/add/meal', (req, res) => {
   const Preparation_Time = req.body.prep_time
   const Image = req.body.image
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
+  console.log(Image)
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
       res.status(500).send()
