@@ -589,7 +589,7 @@ app.post('/add/meal', (req, res) => {
   const MealDate = req.body.date
   const Description = req.body.description
   const Preparation_Time = req.body.prep_time
-  const Image = fs.readFileSync('img/img1.jpeg').toString('hex')
+  const Image = fs.readFileSync('img/img1.png').toString('hex')
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
