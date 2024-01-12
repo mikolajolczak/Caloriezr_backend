@@ -586,6 +586,7 @@ app.post('/add/meal', (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
   const MealDate = req.body.date
+  const Description = req.body.description
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
@@ -593,13 +594,13 @@ app.post('/add/meal', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const addMealQuery = `INSERT INTO Meals(Name) VALUES (?)`
+      const addMealQuery = `INSERT INTO Meals(Meal_Name, Preparation_Time, Image) VALUES (?)`
       connection.query(addMealQuery, [MealName], (err, rows) => {
         if (err) {
           res.status(500).send()
           throw err
         }
-        const getMealId = `SELECT * FROM Meals WHERE Name = ?`
+        const getMealId = `SELECT * FROM Meals WHERE Meal_Name = ?`
         connection.query(getMealId, [MealName], (err, meal) => {
           if (err) {
             res.status(500).send()
@@ -616,8 +617,8 @@ app.post('/add/meal', (req, res) => {
                 res.status(500).send()
                 throw err
               }
-              const addMealToUser = 'INSERT INTO Meal_Users(Meal_Id, User_Id, Date) VALUES (?,?,?)'
-              connection.query(addMealToUser, [meal[0].Id, users[0].Id, new Date(MealDate)], (err, rows) => {
+              const addMealToUser = 'INSERT INTO Meal_Users(Meal_Id, User_Id, Date, Description, isDone) VALUES (?,?,?,?,?)'
+              connection.query(addMealToUser, [meal[0].Id, users[0].Id, new Date(MealDate),Description, false], (err, rows) => {
                 if (err) {
                   res.status(500).send()
                   throw err
