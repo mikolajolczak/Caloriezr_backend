@@ -1,5 +1,6 @@
 const express = require('express');
 const mysql = require('mysql');
+const fs = require('fs')
 const app = express();
 const createUnixSocketPool = () => {
   return mysql.createConnection({
@@ -588,7 +589,7 @@ app.post('/add/meal', (req, res) => {
   const MealDate = req.body.date
   const Description = req.body.description
   const Preparation_Time = req.body.prep_time
-  const Image = req.body.image
+  const Image = fs.readFileSync('img/img1.png').toString('hex')
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   console.log(Image)
   connection.query(getUserQuery, [Password, Email], (err, users) => {
