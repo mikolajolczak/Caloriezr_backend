@@ -596,7 +596,7 @@ app.post('/add/meal', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const addMealQuery = `INSERT INTO Meals(Meal_Name, Preparation_Time, Image) VALUES (?,?,?)`
+      const addMealQuery = `INSERT INTO Meals(Meal_Name, Preparation_Time, Image) VALUES (?,?, ?)`
       connection.query(addMealQuery, [MealName, Preparation_Time,Image], (err, rows) => {
         if (err) {
           res.status(500).send()
