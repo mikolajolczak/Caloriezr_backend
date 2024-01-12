@@ -167,7 +167,10 @@ app.post('/change/walk/limit', (req, res) => {
 app.post('/change/meal/limit', (req, res) => {
   const Password = req.body.password;
   const Email = req.body.email;
-  const NewLimit = req.body.new_limit
+  const carbonLimit = req.body.carbon_limit
+  const caloriesLimit = req.body.calories_limit
+  const proteinsLimit = req.body.proteins_limit
+  const fatsLimit = req.body.fats_limit
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, rows) => { 
     if (err) {
@@ -176,7 +179,7 @@ app.post('/change/meal/limit', (req, res) => {
     }
     if (rows.length > 0) {
       const updateStepLimitQuery = `Update Users SET Calories_Limit=?,Carbs_Limit=?,Proteins_Limit=?,Fats_Limit=? WHERE Id = ?`
-      connection.query(updateStepLimitQuery, [NewLimit, rows[0].Id], (err, rows) => {
+      connection.query(updateStepLimitQuery, [caloriesLimit,carbonLimit,proteinsLimit,fatsLimit, rows[0].Id], (err, rows) => {
         if (err) {
           res.status(500).send()
           throw err
