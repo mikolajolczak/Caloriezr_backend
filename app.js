@@ -696,7 +696,7 @@ app.post('/add/product/meal', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const getMealsByNameQuery = `INSERT INTO FROM Products_Meals(Product_Id, Meal_Id, Quantity) VALUES (?,?,?)`
+      const getMealsByNameQuery = `INSERT INTO Products_Meals(Product_Id, Meal_Id, Quantity) VALUES (?,?,?)`
       connection.query(getMealsByNameQuery, [Product_Id,Meal_Id, Quantity], (err, meals) => {
         if (err) {
           res.status(500).send([])
