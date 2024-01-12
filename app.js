@@ -591,14 +591,13 @@ app.post('/add/meal', (req, res) => {
   const Preparation_Time = req.body.prep_time
   const Image = fs.readFileSync('img/img1.png').toString('hex')
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
-  console.log(Image)
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
       res.status(500).send()
       throw err
     }
     if (users.length > 0) {
-      const addMealQuery = `INSERT INTO Meals(Meal_Name, Preparation_Time, Image) VALUES (?,?, ?)`
+      const addMealQuery = `INSERT INTO Meals(Meal_Name, Preparation_Time, Image) VALUES (?,?, x\'${Image}\')`
       connection.query(addMealQuery, [MealName, Preparation_Time,Image], (err, rows) => {
         if (err) {
           res.status(500).send()
