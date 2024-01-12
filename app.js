@@ -587,6 +587,8 @@ app.post('/add/meal', (req, res) => {
   const Email = req.body.email
   const MealDate = req.body.date
   const Description = req.body.description
+  const Preparation_Time = req.body.prep_time
+  const Image = req.body.image
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
@@ -594,8 +596,8 @@ app.post('/add/meal', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const addMealQuery = `INSERT INTO Meals(Meal_Name, Preparation_Time, Image) VALUES (?)`
-      connection.query(addMealQuery, [MealName], (err, rows) => {
+      const addMealQuery = `INSERT INTO Meals(Meal_Name, Preparation_Time, Image) VALUES (?,?,?)`
+      connection.query(addMealQuery, [MealName, Preparation_Time,Image], (err, rows) => {
         if (err) {
           res.status(500).send()
           throw err
