@@ -164,6 +164,29 @@ app.post('/change/walk/limit', (req, res) => {
   })
 })
 
+app.post('/change/meal/limit', (req, res) => {
+  const Password = req.body.password;
+  const Email = req.body.email;
+  const NewLimit = req.body.new_limit
+  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
+  connection.query(getUserQuery, [Password, Email], (err, rows) => { 
+    if (err) {
+      res.status(500).send()
+      throw err
+    }
+    if (rows.length > 0) {
+      const updateStepLimitQuery = `Update Users SET Calories_Limit=?,Carbs_Limit=?,Proteins_Limit=?,Fats_Limit=? WHERE Id = ?`
+      connection.query(updateStepLimitQuery, [NewLimit, rows[0].Id], (err, rows) => {
+        if (err) {
+          res.status(500).send()
+          throw err
+        }
+        res.status(200).send()
+      })
+    }
+  })
+})
+
 app.post('/add/user', (req, res) => {
   const Password = req.body.password;
   const Email = req.body.email
