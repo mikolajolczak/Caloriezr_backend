@@ -1015,7 +1015,7 @@ app.post('/get/training/name', (req, res) => {
   })
 })
 
-app.post('/get/training/info', (req, res) => {
+app.post('/get/training/info', async (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
   const TrainingId = req.body.id
@@ -1033,15 +1033,15 @@ app.post('/get/training/info', (req, res) => {
           throw err
         }
         const getExercisesBodyParts = `SELECT Body_Parts.Name as Name FROM Exercises_Body_Parts INNER JOIN Body_Parts ON Exercises_Body_Parts = Body_Parts WHERE Exercises_Body_Parts.Exercise_Id = ?;` 
-        exercises.forEach(exercise => {
-          connection.query(getExercisesBodyParts, [exercise.Id], (err, bodyparts) => {
-          if (err) {
-            res.status(500).send()
-            throw err
-            }
-            exercise = {...exercise, "Body_Parts":bodyparts.Name}
-        })
-        });
+        for (let i = 0; i < exercises.length; i++){
+          connection.query(getExercisesBodyParts, [exercises[i].Id], (err, bodyparts) => {
+            if (err) {
+              res.status(500).send()
+              throw err
+              }
+              exercises[i] = {...exercises[i], "Body_Parts":bodyparts.Name}
+          })
+        }
         res.status(200).send(exercises)
       })
     }
