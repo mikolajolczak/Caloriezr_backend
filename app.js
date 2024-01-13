@@ -103,7 +103,7 @@ app.post('/add/user', (req, res) => {
   const FatsLimit = req.body.fats_limit
   const StepLimit = req.body.step_limit
   const WaterLimit = req.body.water_limit
-  const addUserQuery = `INSERT INTO (Name, Password, Email, Water_Limit, Step_Limit, Calories_Limit, Carbs_Limit, Proteins_Limit, Fats_Limit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  const addUserQuery = `INSERT INTO (Name, Password, Email, Water_Limit, Step_Limit, Calories_Limit, Carbs_Limit, Proteins_Limit, Fats_Limit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
   connection.query(addUserQuery, [Name, Password, Email, WaterLimit, StepLimit, CaloriesLimit,CarbsLimit,ProteinsLimit,FatsLimit], (err, rows) => {
     if (err) {
       res.status(500).send()
