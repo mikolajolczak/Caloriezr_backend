@@ -15,8 +15,8 @@ app.use(express.json())
 connection.connect()
 //new
 app.get('/get/user', (req, res) => {
-  const Password = req.body.password;
-  const Email = req.body.email;
+  const Password = req.query.password;
+  const Email = req.query.email;
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password,Email], (err, rows) => {
     if (err) throw err
