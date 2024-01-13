@@ -923,6 +923,7 @@ app.post('/add/training', (req, res) => {
   const StartDate = req.body.start_date
   const EndDate = req.body.end_date
   const Exercises = req.body.exercises
+  const Description = req.body.description
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
@@ -943,8 +944,8 @@ app.post('/add/training', (req, res) => {
             res.status(500).send()
             throw err
           }
-          const connectTrainingToUser = `INSERT INTO Users_Trainings(User_Id, Training_Id, Date_Start, Date_End, isDone) VALUES (?,?,?,?,?)`
-          connection.query(connectTrainingToUser, [users[0].Id, trainings[0].Id, new Date(StartDate), new Date(EndDate), false], (err, rows) => {
+          const connectTrainingToUser = `INSERT INTO Users_Trainings(User_Id, Training_Id, Date_Start, Date_End, IsDone, Description) VALUES (?,?,?,?,?,?)`
+          connection.query(connectTrainingToUser, [users[0].Id, trainings[0].Id, new Date(StartDate), new Date(EndDate), false, Description], (err, rows) => {
             if (err) {
               res.status(500).send()
               throw err
