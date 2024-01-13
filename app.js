@@ -708,6 +708,29 @@ app.post('/add/product/meal', (req, res) => {
   })
 }) // get meal names TOP5
 
+app.post('/del/meal', (req, res) => {
+  const Password = req.body.password;
+  const Email = req.body.email;
+  const Meal_Id = req.body.id
+  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
+  connection.query(getUserQuery, [Password, Email], (err, users) => {
+    
+    if (err) {
+      res.status(403).send()
+      throw err
+    }
+    if (users.length > 0) {
+      const delMealQuery = `DELETE FROM Meal_Users WHERE Meal_Id=? AND User_Id = ?;`
+      connection.query(delMealQuery, [users[0].Id, Meal_Id], (err, rows) => {
+        if (err) {
+          res.status(500).send()
+          throw err
+        }
+        res.status(200).send([])
+      })
+    }
+  })
+})
 
 const getProductsFromMeal = async (password, email, startingdate) => {
   const getProductsQuery = `SELECT Product_Id, Score, Size, Unit, Barcode, Group_Id, Name, Calories, Fats, Carbons, Proteins, Quantity FROM Products_Meals INNER JOIN Products ON Products_Meals.Product_Id = Products.Id WHERE Products_Meals.Meal_Id = ?`
