@@ -921,7 +921,7 @@ app.post('/add/training', (req, res) => {
   const Email = req.body.email
   const TrainingName = req.body.name
   const StartDate = req.body.start_date
-  const EndDate = req.body.start_date
+  const EndDate = req.body.end_date
   const Exercises = req.body.exercises
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
@@ -971,7 +971,7 @@ app.post('/add/training', (req, res) => {
 app.post('/get/training/name', (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
-  const trainingName = req.body.email
+  const trainingName = req.body.name
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
   connection.query(getUserQuery, [Password, Email], (err, users) => {
     if (err) {
