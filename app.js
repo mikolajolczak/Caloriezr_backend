@@ -1050,7 +1050,7 @@ app.post('/get/training/info', async (req, res) => {
           const bodyParts = await getBodyParts(exercise)
           exercisesToSend.push({...exercise, "Body_Parts": bodyParts})
         }
-        res.status(200).send(exercises)
+        res.status(200).send(exercisesToSend)
       })
     }
   })
