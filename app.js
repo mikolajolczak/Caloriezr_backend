@@ -21,13 +21,14 @@ app.get('/get/user', (req, res) => {
   connection.query(getUserQuery, [Password,Email], (err, rows) => {
     if (err) throw err
     if (rows.length > 0) {
-      res.status(200).send({ name: rows[0].Name, step_limit: rows[0].Step_Limit, water_limit: rows[0].Water_Limit, calories_limit: rows[0].Calories_Limit,carbs_limit: rows[0].Carbs_Limit,fats_limit: rows[0].Fats_Limit,Proteins_limit: rows[0].Proteins_Limit})
+      res.status(200).send({ok:1})
     }
     else {
       res.status(400).send()
     }
   })
 })
+
 app.post('/get/user', (req, res) => {
   const Password = req.body.password;
   const Email = req.body.email;
@@ -96,14 +97,19 @@ app.post('/add/user', (req, res) => {
   const Password = req.body.password;
   const Email = req.body.email
   const Name = req.body.name
-  const Timezone = req.body.timezone
-  const addUserQuery = `INSERT INTO Users (Password, Email, Name, Timezone) VALUES (?,?,?,?)`
-  connection.query(addUserQuery, [Password, Email, Name, Timezone], (err, rows) => {
+  const CarbsLimit = req.body.name
+  const CaloriesLimit = req.body.name
+  const ProteinsLimit = req.body.name
+  const FatsLimit = req.body.name
+  const StepLimit = req.body.name
+  const WaterLimit = req.body.name
+  const addUserQuery = `INSERT INTO (Name, Password, Email, Water_Limit, Step_Limit, Calories_Limit, Carbs_Limit, Proteins_Limit, Fats_Limit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  connection.query(addUserQuery, [Name, Password, Email, WaterLimit, StepLimit, CaloriesLimit,CarbsLimit,ProteinsLimit,FatsLimit], (err, rows) => {
     if (err) {
       res.status(500).send()
       throw err
     };
-    res.status(200).send()
+    res.status(200).send({ok:1})
   })
 })
 
