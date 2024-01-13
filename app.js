@@ -918,6 +918,29 @@ app.post('/get/exercise/name', (req, res) => {
   })
 })
 
+app.post('/del/training', (req, res) => {
+  const Password = req.body.password
+  const Email = req.body.email
+  const TrainingId = req.body.training_id
+  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
+  connection.query(getUserQuery, [Password, Email], (err, users) => {
+    if (err) {
+      res.status(403).send()
+      throw err
+    }
+    if (users.length > 0) {
+      const setNewWaterLimit = `DELETE FROM Users_Trainings WHERE Training_Id = ? AND User_Id = ?`
+      connection.query(setNewWaterLimit, [TrainingId, users[0].Id], (err, exercises) => {
+        if (err) {
+          res.status(500).send()
+          throw err
+        }
+        res.status(200).send(exercises)
+       })
+    }
+  })
+})
+
 app.post('/get/weekly/water', (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
