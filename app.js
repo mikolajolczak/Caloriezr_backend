@@ -1026,7 +1026,7 @@ app.post('/get/training/info', (req, res) => {
       throw err
     }
     if (users.length > 0) { 
-      const getTrainingExercises = `SELECT * FROM Trainings_Exercises INNER JOIN Exercises ON Training_Exercises.Exercise_Id = Exercises.Id WHERE Training_Id = ?;`
+      const getTrainingExercises = `SELECT * FROM Trainings_Exercises INNER JOIN Exercises ON Trainings_Exercises.Exercise_Id = Exercises.Id WHERE Training_Id = ?;`
       connection.query(getTrainingExercises, [TrainingId], (err, exercises) => {
         if (err) {
           res.status(500).send()
