@@ -1,6 +1,8 @@
 const express = require('express');
 const mysql = require('mysql');
-const fs = require('fs')
+const fs = require('fs');
+const { resolve } = require('path');
+const { rejects } = require('assert');
 const app = express();
 const createUnixSocketPool = () => {
   return mysql.createConnection({
@@ -1015,32 +1017,37 @@ app.post('/get/training/name', (req, res) => {
   })
 })
 
+const getBodyParts = async (exercise) => {
+  const getExercisesBodyParts = `SELECT Body_Parts.Name as Name FROM Exercises_Body_Parts INNER JOIN Body_Parts ON Exercises_Body_Parts = Body_Parts WHERE Exercises_Body_Parts.Exercise_Id = ?;`
+          
+  return new Promise((resolve,reject)=>{connection.query(getExercisesBodyParts, [exercise.Id], (err, bodyparts) => {
+    if (err) {
+      reject(err)
+      }
+      resolve(bodyparts)
+  })})
+}
+
 app.post('/get/training/info', async (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
   const TrainingId = req.body.id
   const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
-  connection.query(getUserQuery, [Password, Email], (err, users) => {
+  connection.query(getUserQuery, [Password, Email], async (err, users) => {
     if (err) {
       res.status(403).send()
       throw err
     }
     if (users.length > 0) { 
       const getTrainingExercises = `SELECT * FROM Trainings_Exercises INNER JOIN Exercises ON Trainings_Exercises.Exercise_Id = Exercises.Id WHERE Training_Id = ?;`
-      connection.query(getTrainingExercises, [TrainingId], (err, exercises) => {
+      connection.query(getTrainingExercises, [TrainingId], async (err, exercises) => {
         if (err) {
           res.status(500).send()
           throw err
         }
-        const getExercisesBodyParts = `SELECT Body_Parts.Name as Name FROM Exercises_Body_Parts INNER JOIN Body_Parts ON Exercises_Body_Parts = Body_Parts WHERE Exercises_Body_Parts.Exercise_Id = ?;` 
-        for (let i = 0; i < exercises.length; i++){
-          connection.query(getExercisesBodyParts, [exercises[i].Id], (err, bodyparts) => {
-            if (err) {
-              res.status(500).send()
-              throw err
-              }
-              exercises[i] = {...exercises[i], "Body_Parts":bodyparts.Name}
-          })
+        for (const exercise of exercises) {
+          const bodyParts = await getBodyParts(exercise)
+          exercise = {...exercise, "Body_Parts": bodyParts}
         }
         res.status(200).send(exercises)
       })
