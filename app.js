@@ -941,6 +941,30 @@ app.post('/del/training', (req, res) => {
   })
 })
 
+app.post('/del/exercise/training', (req, res) => {
+  const Password = req.body.password
+  const Email = req.body.email
+  const TrainingId = req.body.training_id
+  const ExerciseId = req.body.exercise_id
+  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
+  connection.query(getUserQuery, [Password, Email], (err, users) => {
+    if (err) {
+      res.status(403).send()
+      throw err
+    }
+    if (users.length > 0) {
+      const setNewWaterLimit = `DELETE FROM Trainings_Exercises WHERE Training_Id = ? AND Exercise_Id = ?`
+      connection.query(setNewWaterLimit, [TrainingId, ExerciseId], (err, exercises) => {
+        if (err) {
+          res.status(500).send()
+          throw err
+        }
+        res.status(200).send()
+       })
+    }
+  })
+})
+
 app.post('/get/weekly/water', (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
