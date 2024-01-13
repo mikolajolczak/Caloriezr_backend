@@ -893,6 +893,29 @@ app.post('/change/water/limit', (req, res) => {
   })
 })
 
+app.post('/get/exercise/name', (req, res) => {
+  const Password = req.body.password
+  const Email = req.body.email
+  const name = req.body.name
+  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
+  connection.query(getUserQuery, [Password, Email], (err, users) => {
+    if (err) {
+      res.status(403).send()
+      throw err
+    }
+    if (users.length > 0) {
+      const setNewWaterLimit = `SELECT * Exercises WHERE Name LIKE ? LIMIT 5`
+      connection.query(setNewWaterLimit, ['%' + Name + '%'], (err, exercises) => {
+        if (err) {
+          res.status(500).send()
+          throw err
+        }
+        res.status(200).send(exercises)
+       })
+    }
+  })
+})
+
 app.post('/get/weekly/water', (req, res) => {
   const Password = req.body.password
   const Email = req.body.email
