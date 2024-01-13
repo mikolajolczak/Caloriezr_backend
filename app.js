@@ -904,7 +904,7 @@ app.post('/get/exercise/name', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const setNewWaterLimit = `SELECT * Exercises WHERE Name LIKE ? LIMIT 5`
+      const setNewWaterLimit = `SELECT * FROM Exercises WHERE Name LIKE ? LIMIT 5`
       connection.query(setNewWaterLimit, ['%' + name + '%'], (err, exercises) => {
         if (err) {
           res.status(500).send()
