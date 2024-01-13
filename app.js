@@ -935,7 +935,7 @@ app.post('/del/training', (req, res) => {
           res.status(500).send()
           throw err
         }
-        res.status(200).send(exercises)
+        res.status(200).send()
        })
     }
   })
