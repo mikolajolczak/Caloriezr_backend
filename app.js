@@ -1018,7 +1018,7 @@ app.post('/get/training/name', (req, res) => {
 })
 
 const getBodyParts = async (exercise) => {
-  const getExercisesBodyParts = `SELECT Body_Parts.Name as Name FROM Exercises_Body_Parts INNER JOIN Body_Parts ON Exercises_Body_Parts = Body_Parts WHERE Exercises_Body_Parts.Exercise_Id = ?;`
+  const getExercisesBodyParts = `SELECT Body_Parts.Name as Name FROM Exercises_Body_Parts INNER JOIN Body_Parts ON Exercises_Body_Parts.Body_Part_Id = Body_Parts.Id WHERE Exercises_Body_Parts.Exercise_Id = ?;`
           
   return new Promise((resolve,reject)=>{connection.query(getExercisesBodyParts, [exercise.Id], (err, bodyparts) => {
     if (err) {
