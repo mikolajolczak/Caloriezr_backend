@@ -1045,9 +1045,10 @@ app.post('/get/training/info', async (req, res) => {
           res.status(500).send()
           throw err
         }
+        const exercisesToSend = []
         for (const exercise of exercises) {
           const bodyParts = await getBodyParts(exercise)
-          exercise = {...exercise, "Body_Parts": bodyParts}
+          exercisesToSend.push({...exercise, "Body_Parts": bodyParts})
         }
         res.status(200).send(exercises)
       })
