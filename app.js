@@ -930,7 +930,8 @@ app.post('/add/training', (req, res) => {
     throw err
     }
     if (users.length > 0) {
-      const insertNewTraining = `INSERT INTO Trainings(Name) VALUES (?)`
+      const Image = fs.readFileSync('img/img1.png').toString('hex')
+      const insertNewTraining = `INSERT INTO Trainings(Name, Image) VALUES (?,  x\'${Image}\')`
       connection.query(insertNewTraining, [TrainingName], (err, rows) => {
         if (err) {
           res.status(500).send()
@@ -942,8 +943,8 @@ app.post('/add/training', (req, res) => {
             res.status(500).send()
             throw err
           }
-          const connectTrainingToUser = `INSERT INTO Users_Trainings(User_Id, Training_Id, Date_Start, Date_End) VALUES (?,?,?,?)`
-          connection.query(connectTrainingToUser, [users[0].Id, trainings[0].Id, new Date(StartDate), new Date(EndDate)], (err, rows) => {
+          const connectTrainingToUser = `INSERT INTO Users_Trainings(User_Id, Training_Id, Date_Start, Date_End, isDone) VALUES (?,?,?,?,?)`
+          connection.query(connectTrainingToUser, [users[0].Id, trainings[0].Id, new Date(StartDate), new Date(EndDate), false], (err, rows) => {
             if (err) {
               res.status(500).send()
               throw err
