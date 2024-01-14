@@ -182,7 +182,7 @@ app.post('/get/weekly/walk', (req, res) => {
     }
     if (rows.length > 0) {
       const getWeeklyWalksQuery = `SELECT Steps, Date_Start, Date_End, Length FROM Walks WHERE Date_Start >= ? AND Date_Start < ? AND User_Id = ? ORDER BY Date_End`
-      connection.query(getWeeklyWalksQuery, [new Date(Date_Start), new Date(new Date(Date_Start).getFullYear(), new Date(Date_Start).getMonth(), new Date(Date_Start).getDate() + 7), rows[0].Id], (err, rows) => {
+      connection.query(getWeeklyWalksQuery, [new Date(Date_Start), new Date(new Date(Date_Start).getFullYear(), new Date(Date_Start).getMonth(), new Date(Date_Start).getDate() + 8), rows[0].Id], (err, rows) => {
         if (err) {
           res.status(500).send()
         }
@@ -206,7 +206,7 @@ app.post('/get/weekly/group/walk', (req, res) => {
     }
     if (rows.length > 0) {
       const getDailyInfoQuery = `SELECT SUM(Steps) as Sum_Steps, SUM(Length) as Sum_Length,Date(Date_Start) as Day FROM Walks WHERE Date_Start >= ? AND Date_Start < ? AND User_Id = ? GROUP BY Day`
-      connection.query(getDailyInfoQuery, [new Date(Date_Start), new Date(new Date(Date_Start).getFullYear(), new Date(Date_Start).getMonth(), new Date(Date_Start).getDate() + 7), rows[0].Id], (err, rows) => {
+      connection.query(getDailyInfoQuery, [new Date(Date_Start), new Date(new Date(Date_Start).getFullYear(), new Date(Date_Start).getMonth(), new Date(Date_Start).getDate() + 8), rows[0].Id], (err, rows) => {
         if (err) {
           res.status(500).send()
           throw err
