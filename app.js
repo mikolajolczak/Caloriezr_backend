@@ -692,7 +692,7 @@ const getMealsFromUser = async (password, email, startingdate) => {
   try {
     const user = await getUser(password, email)
     return new Promise((resolve, reject) => {
-      connection.query(getMealsQuery, [user.Id, new Date(startingdate), new Date(new Date(startingdate).getFullYear(), new Date(startingdate).getMonth(), new Date(startingdate).getDate() + 7)], (err, meals) => { 
+      connection.query(getMealsQuery, [user.Id, new Date(startingdate), new Date(new Date(startingdate).getFullYear(), new Date(startingdate).getMonth(), new Date(startingdate).getDate() + 8)], (err, meals) => { 
         if (err)
           reject(err)
         resolve({calories_limit: user.Calories_Limit, carbs_limit: user.Carbs_Limit, proteins_limit: user.Proteins_Limit,fats_limit: user.Fats_Limit, meals: meals})
@@ -1013,7 +1013,7 @@ const getTrainingsFromUser = async (password, email, startingdate) => {
   try {
     const user = await getUser(password, email)
     return new Promise((resolve, reject) => {
-      connection.query(getUserTrainings, [user.Id, new Date(startingdate), new Date(new Date(startingdate).getFullYear(), new Date(startingdate).getMonth(), new Date(startingdate).getDate() + 7)], (err, trainings) => {
+      connection.query(getUserTrainings, [user.Id, new Date(startingdate), new Date(new Date(startingdate).getFullYear(), new Date(startingdate).getMonth(), new Date(startingdate).getDate() + 8)], (err, trainings) => {
         if (err)
           reject(err)
         resolve(trainings)
