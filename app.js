@@ -688,7 +688,7 @@ const getUser = async (password, email) => {
 }
 
 const getMealsFromUser = async (password, email, startingdate) => {
-  const getMealsQuery = `SELECT * FROM Meal_Users INNER JOIN Meals ON Meal_Users.Meal_Id = Meals.Id WHERE User_Id = ? AND Meal_Users.Date >= ? Meal_Users.Date <= ?`
+  const getMealsQuery = `SELECT * FROM Meal_Users INNER JOIN Meals ON Meal_Users.Meal_Id = Meals.Id WHERE User_Id = ? AND Meal_Users.Date >= ? AND Meal_Users.Date <= ?`
   try {
     const user = await getUser(password, email)
     return new Promise((resolve, reject) => {
