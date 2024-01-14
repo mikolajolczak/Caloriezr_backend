@@ -1061,6 +1061,52 @@ app.post('/get/weekly/training', async (req, res) => {
   }
 })
 
+app.post('/set/training/done', async (req, res) => {
+  const Password = req.body.password
+  const Email = req.body.email
+  const TrainingId = req.body.id
+  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
+  connection.query(getUserQuery, [Password, Email], async (err, users) => {
+    if (err) {
+      res.status(403).send()
+      throw err
+    }
+    if (users.length > 0) { 
+      const getTrainingExercises = `UPDATE Users_Trainings SET isDone = ? WHERE Training_Id = ? AND User_Id = ?`
+      connection.query(getTrainingExercises, [true, TrainingId, users[0].Id], async (err, rows) => {
+        if (err) {
+          res.status(500).send()
+          throw err
+        }
+        res.status(200).send([])
+      })
+    }
+  })
+})
+
+app.post('/set/meal/done', async (req, res) => {
+  const Password = req.body.password
+  const Email = req.body.email
+  const MealId = req.body.id
+  const getUserQuery = `SELECT * FROM Users WHERE Password = ? AND Email = ?`
+  connection.query(getUserQuery, [Password, Email], async (err, users) => {
+    if (err) {
+      res.status(403).send()
+      throw err
+    }
+    if (users.length > 0) { 
+      const getTrainingExercises = `UPDATE Meal_Users SET isDone = ? WHERE Meal_Id = ? AND User_Id = ?`
+      connection.query(getTrainingExercises, [true, MealId, users[0].Id], async (err, exercises) => {
+        if (err) {
+          res.status(500).send()
+          throw err
+        }
+        res.status(200).send([])
+      })
+    }
+  })
+})
+
 const PORT = parseInt(process.env.PORT) || 8080;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
