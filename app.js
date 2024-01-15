@@ -889,8 +889,8 @@ app.post('/get/weekly/water', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const getWeeklyWatersQuery = `SELECT * FROM Water_Users WHERE User_Id = ? AND Date BETWEEN ? AND ?;`
-      connection.query(getWeeklyWatersQuery, [users[0].Id, new Date(startingDate), new Date(new Date(startingDate).getFullYear(), new Date(startingDate).getMonth(), new Date(startingDate).getDate() + 7)], (err, rows) => {
+      const getWeeklyWatersQuery = `SELECT * FROM Water_Users WHERE User_Id = ? AND Date >= ? AND  Date < ?;`
+      connection.query(getWeeklyWatersQuery, [users[0].Id, new Date(startingDate), new Date(new Date(startingDate).getFullYear(), new Date(startingDate).getMonth(), new Date(startingDate).getDate() + 8)], (err, rows) => {
         if (err) {
           res.status(500).send()
           throw err
