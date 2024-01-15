@@ -771,7 +771,7 @@ app.post('/add/water', (req, res) => {
         }
         else {
           const addWater = `INSERT INTO Water_Users (Date, User_Id, Drunk_Water)  VALUES (?,?,200) `
-          connection.query(updateWaterState, [new Date(),users[0].Id], (err, rows) => {
+          connection.query(addWater, [new Date(),users[0].Id], (err, rows) => {
             if (err) {
               res.status(500).send()
               throw err
