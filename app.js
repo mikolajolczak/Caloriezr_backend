@@ -770,7 +770,14 @@ app.post('/add/water', (req, res) => {
           })
         }
         else {
-          res.status(500).send()
+          const addWater = `INSERT INTO Water_Users (Date, User_Id, Drunk_Water)  VALUES (?,?,200) `
+          connection.query(updateWaterState, [new Date(),users[0].Id], (err, rows) => {
+            if (err) {
+              res.status(500).send()
+              throw err
+            }
+            res.status(200).send()
+          })
         }
       })
       
