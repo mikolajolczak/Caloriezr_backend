@@ -504,7 +504,7 @@ app.post('/add/meal', (req, res) => {
       throw err
     }
     if (users.length > 0) {
-      const addMealQuery = `INSERT INTO Meals(Meal_Name, Preparation_Time, Image) VALUES (?,?, x\'${Image}\')`
+      const addMealQuery = `INSERT INTO Meals(Meal_Name, Preparation_Time) VALUES (?,?)`
       connection.query(addMealQuery, [MealName, Preparation_Time,Image], (err, rows) => {
         if (err) {
           res.status(500).send()
@@ -909,7 +909,7 @@ app.post('/add/training', (req, res) => {
     }
     if (users.length > 0) {
       const Image = fs.readFileSync('img/img1.png').toString('hex')
-      const insertNewTraining = `INSERT INTO Trainings(Name, Image) VALUES (?,  x\'${Image}\')`
+      const insertNewTraining = `INSERT INTO Trainings(Name) VALUES (?)`
       connection.query(insertNewTraining, [TrainingName], (err, rows) => {
         if (err) {
           res.status(500).send()
