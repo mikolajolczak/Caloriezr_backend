@@ -653,10 +653,11 @@ const getProductsFromMeal = async (password, email, startingdate) => {
             let carbs = 0
             let fats = 0
             results.forEach(product => {
-              calories += product.Calories * product.Quantity;
-              carbs += product.Carbons * product.Quantity;
-              proteins += product.Proteins * product.Quantity;
-              fats += product.Fats * product.Quantity;
+              let multiplier = product.Quantity / product.Size;
+              calories += product.Calories * multiplier;
+              carbs += product.Carbons * multiplier;
+              proteins += product.Proteins * multiplier;
+              fats += product.Fats * multiplier;
             });
             meal.products = results
             meal.calories = calories
