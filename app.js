@@ -938,7 +938,7 @@ app.post('/add/training', (req, res) => {
             for (let i = 0; i < Exercises.length; i++){
               Exercises[i].push(trainings[0].Id)
             }
-            const addExercisesToTraining = `INSERT INTO Trainings_Exercises(Exercise_Id, Repetitions, Series, Distance, Training_Id) VALUES ?`
+            const addExercisesToTraining = `INSERT INTO Trainings_Exercises(Exercise_Id, Repetitions, Series, Training_Id) VALUES ?`
             connection.query(addExercisesToTraining, [Exercises], (err, rows) => {
               if (err) {
                 res.status(500).send()
